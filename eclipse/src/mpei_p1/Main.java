@@ -27,6 +27,9 @@ public class Main {
             	String review_user = (String) reviews.get(j).getUser();
         	}
 		}
+		
+		HashFunction b = new HashFunction(30000,500000);
+		System.out.println(b.getSeeds());
 	
 
 	}

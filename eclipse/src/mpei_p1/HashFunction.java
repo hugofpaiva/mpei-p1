@@ -16,8 +16,7 @@ public class HashFunction {
 		for (int i = 0; i < k; i++) {
 
 			prime = Math.abs(rand.nextInt(max));
-			while (!isPrime(prime)) {
-
+			while (!isPrime(prime) && !seeds.contains(prime)) {
 				prime = Math.abs(rand.nextInt(max));
 			}
 			this.seeds.add(prime);

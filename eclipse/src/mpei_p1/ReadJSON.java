@@ -86,21 +86,26 @@ public class ReadJSON {
 	        
 		}
 
+
 		public ArrayList<Review> getReviews() {
 			return reviews;
 		}
 
-		public void setReviews(HashMap<String, String> reviews) {
+
+		public void setReviews(ArrayList<Review> reviews) {
 			this.reviews = reviews;
 		}
+
 
 		public ArrayList<Game> getJogos() {
 			return jogos;
 		}
 
+
 		public void setJogos(ArrayList<Game> jogos) {
 			this.jogos = jogos;
 		}
+
 		
 		
 

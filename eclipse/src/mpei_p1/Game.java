@@ -8,20 +8,12 @@ public class Game {
 	private ArrayList<Review> reviews = new ArrayList<>();
 	
 	
-	public Game(String nome, HashMap<String,String> review) {
+	public Game(String nome, ArrayList<Review> reviews) {
 		this.name = nome;
-		addReview(review);
+		this.reviews=reviews;
 		
 	}
 	
-	private void addReview(HashMap<String,String> review) {
-		for (String key : review.keySet()) {
-			Review r = new Review(key, review.get(key));
-			reviews.add(r);
-		}
-		
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -40,14 +32,4 @@ public class Game {
 	public String toString() {
 		return "Game [name=" + name + "]";
 	}
-	
-	
-	
-	
-	
-	
-	
 }
-	
-	
-

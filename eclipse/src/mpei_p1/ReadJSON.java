@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,8 +13,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class ReadJSON {
-		private HashMap<String,String> reviews = new HashMap<>();
+		private ArrayList<Review> reviews = new ArrayList<Review>();
 		private ArrayList<Game> jogos = new ArrayList<>();
+
 
 		public void read() {
 			try {
@@ -28,13 +30,31 @@ public class ReadJSON {
 		        	// criação das reviews do jogo
 		        	
 		        	JSONArray reviews_array = (JSONArray) jogo.get("reviews");
+		        	String review_user = null;
+					String review_content = null;
 		            Iterator<JSONObject> reviews_iterator = reviews_array.iterator();
 		            while(reviews_iterator.hasNext()) {
-		            	String review_content = (String) reviews_iterator.next().get("content");
-		        		reviews.put(nome, review_content);
-		        	}
-		        	
-		    
+		            	Iterator<Map.Entry<String,String>> itr1 = reviews_iterator.next().entrySet().iterator();
+			            while (itr1.hasNext()) {
+			                Map.Entry<String,String> pair = itr1.next();
+			                if (pair.getKey().equals("name")) {
+			                	review_user=pair.getValue();
+			                	itr1.next();
+			                	itr1.next();
+			                	itr1.next();
+			                	itr1.next();
+			                	itr1.next();
+			                	review_content=itr1.next().getValue();
+			            		Review r = new Review(review_user,review_content);
+								reviews.add(r);
+			                }
+			            }
+		            }
+		            if (review_content==null) {
+		            	reviews=new ArrayList<Review>();
+		            }
+		            
+		            
 		        	Game g = new Game(nome, reviews);
 		        	jogos.add(g);		        			   
 		        			
@@ -66,7 +86,7 @@ public class ReadJSON {
 	        
 		}
 
-		public HashMap<String, String> getReviews() {
+		public ArrayList<Review> getReviews() {
 			return reviews;
 		}
 

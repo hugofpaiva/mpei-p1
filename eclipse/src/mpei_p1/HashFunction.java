@@ -24,17 +24,19 @@ public class HashFunction {
 	}
 
 	// Gerar Hash para String
-	public ArrayList<Integer> generateHash_S(String s) {
-		ArrayList<Integer> hashes = new ArrayList<>();
+	public int generateHash_S(String s) {
+		// ArrayList<Integer> hashes = new ArrayList<>();
+		int hash=0;
 		for (int i = 0; i < seeds.size(); i++) {
-			int hash = 0;
+			// int hash = 0;
 			for (int z = 0; z < s.length(); z++) {
 				hash += static_prime * seeds.get(i) * s.charAt(z);
 			}
-
-			hashes.add(hash % n);
+			hash = hash %n;
+			// hashes.add(hash % n); nao percebi, é suposto retornar
+			// uma posicao para o bloom ou seja um inteiro
 		}
-		return hashes;
+		return hash;
 
 	}
 

@@ -16,20 +16,29 @@ public class Main {
 		json.read();
 		jogos = json.getJogos();
 		reviews = json.getReviews();
-				
+		
+		// Criaçao do bloom e inserir a HashFunction para o bloom usar
+		CBloom mybloom = new CBloom(jogos.size(), 0.1);
+		mybloom.initialize();
+		HashFunction myHash=new HashFunction(mybloom.getK(), jogos.size());
+		mybloom.setHashFunction(myHash);
+		
+		
 		for (int i=0;i<jogos.size();i++) {
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
         	if (reviews.size() == 0) {
-        		System.out.println(jogos.get(i).getName());
+        		//System.out.println(jogos.get(i).getName());
         	}
         	for (int j=0;j<reviews.size();j++) {
+        		String jogo = (String) jogos.get(i).getName();
             	String review_content = (String) reviews.get(j).getReview();
             	String review_user = (String) reviews.get(j).getUser();
+            	
+            	mybloom.insertEle(jogo);
         	}
 		}
+		System.out.println(mybloom.numEle("Kim - Soundtrack"));
 		
-		HashFunction b = new HashFunction(30000,500000);
-		System.out.println(b.getSeeds());
 	
 
 	}

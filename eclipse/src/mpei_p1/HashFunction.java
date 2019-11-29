@@ -24,19 +24,16 @@ public class HashFunction {
 	}
 
 	// Gerar Hash para String
-	public int generateHash_S(String s) {
-		// ArrayList<Integer> hashes = new ArrayList<>();
-		int hash=0;
+	public ArrayList<Integer> generateHash_S(String s) {
+		ArrayList<Integer> hashes = new ArrayList<>();
 		for (int i = 0; i < seeds.size(); i++) {
-			// int hash = 0;
+			int hash = 0;
 			for (int z = 0; z < s.length(); z++) {
 				hash += seeds.get(i) * s.charAt(z) % n;
 			}
-			// hashes.add(hash % n); nao percebi, é suposto retornar
-			// uma posicao para o bloom ou seja um inteiro
+			hashes.add(hash % n);
 		}
-		return (hash % n);
-
+		return hashes;
 	}
 
 	public boolean isPrime(int n) {

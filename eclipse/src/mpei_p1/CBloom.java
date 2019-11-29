@@ -1,5 +1,6 @@
 package mpei_p1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CBloom {
@@ -41,8 +42,10 @@ public class CBloom {
 	}
 	
 	public void insertEle(String ele) {
-		int index= hashFunction.generateHash_S(ele);
-        myBloom[index]++;
+		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
+		for (int i=0;i<index.size();i++) {
+			myBloom[index.get(i)]++;
+		}
 	}
 	
 	public int numEle(String ele) {

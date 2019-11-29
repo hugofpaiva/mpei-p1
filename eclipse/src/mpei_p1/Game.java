@@ -1,7 +1,6 @@
 package mpei_p1;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Game {
 	private String name;

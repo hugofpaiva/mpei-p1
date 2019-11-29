@@ -30,13 +30,12 @@ public class HashFunction {
 		for (int i = 0; i < seeds.size(); i++) {
 			// int hash = 0;
 			for (int z = 0; z < s.length(); z++) {
-				hash += static_prime * seeds.get(i) * s.charAt(z);
+				hash += seeds.get(i) * s.charAt(z) % n;
 			}
-			hash = hash %n;
 			// hashes.add(hash % n); nao percebi, é suposto retornar
 			// uma posicao para o bloom ou seja um inteiro
 		}
-		return hash;
+		return (hash % n);
 
 	}
 

@@ -13,7 +13,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class ReadJSON {
-		private ArrayList<Review> reviews = new ArrayList<Review>();
+		private ArrayList<Review> reviews;
 		private ArrayList<Game> jogos = new ArrayList<>();
 
 
@@ -30,34 +30,21 @@ public class ReadJSON {
 		        	// criação das reviews do jogo
 		        	
 		        	JSONArray reviews_array = (JSONArray) jogo.get("reviews");
+		        	ArrayList<Review> reviews = new ArrayList<Review>();
 		        	String review_user = null;
 					String review_content = null;
-		            Iterator<JSONObject> reviews_iterator = reviews_array.iterator();
-		            while(reviews_iterator.hasNext()) {
-		            	Iterator<Map.Entry<String,String>> itr1 = reviews_iterator.next().entrySet().iterator();
-			            while (itr1.hasNext()) {
-			                Map.Entry<String,String> pair = itr1.next();
-			                if (pair.getKey().equals("name")) {
-			                	review_user=pair.getValue();
-			                	itr1.next();
-			                	itr1.next();
-			                	itr1.next();
-			                	itr1.next();
-			                	itr1.next();
-			                	review_content=itr1.next().getValue();
-			            		Review r = new Review(review_user,review_content);
-								reviews.add(r);
-			                }
-			            }
-		            }
-		            if (review_content==null) {
-		            	reviews=new ArrayList<Review>();
+
+		            for (int i=0;i<reviews_array.size();i++) {
+		            	JSONObject obj2 = (JSONObject) reviews_array.get(i);
+		            	review_user=(String) obj2.get("name");
+		            	review_content=(String) obj2.get("content");
+		            	Review r = new Review(review_user,review_content);
+						reviews.add(r);
 		            }
 		            
-		            
-		        	Game g = new Game(nome, reviews);
-		        	jogos.add(g);		        			   
-		        			
+		            Game g = new Game(nome, reviews);
+		        	jogos.add(g);
+		     	    		        			
 		        		
 		        	//Leitura de outros campos do JSON para futuro
 		        	

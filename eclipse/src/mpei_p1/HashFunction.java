@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class HashFunction {
 	private static int max = 1000000;
-	private static int static_prime = 2;
+	private static int static_prime = 3089;
 	private ArrayList<Integer> seeds = new ArrayList<>();
 	private int n;
 
@@ -26,10 +26,13 @@ public class HashFunction {
 	// Gerar Hash para String
 	public ArrayList<Integer> generateHash_S(String s) {
 		ArrayList<Integer> hashes = new ArrayList<>();
+		int max= Integer.MAX_VALUE;
 		for (int i = 0; i < seeds.size(); i++) {
 			int hash = 0;
 			for (int z = 0; z < s.length(); z++) {
-				hash += (static_prime*seeds.get(i) * (int) s.charAt(z)) % n;
+				if (((hash+static_prime*seeds.get(i) * (int) s.charAt(z)) % n) > 0) {
+					hash += (static_prime*seeds.get(i) * (int) s.charAt(z)) % n;
+				}
 			}
 			hashes.add(hash % n);
 		}

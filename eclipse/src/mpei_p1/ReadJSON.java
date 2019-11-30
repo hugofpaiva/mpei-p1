@@ -38,8 +38,10 @@ public class ReadJSON {
 		            	JSONObject obj2 = (JSONObject) reviews_array.get(i);
 		            	review_user=(String) obj2.get("name");
 		            	review_content=(String) obj2.get("content");
-		            	Review r = new Review(review_user,review_content);
-						reviews.add(r);
+		            	if (review_user !=null && review_content != null) {
+			            	Review r = new Review(review_user,review_content);
+							reviews.add(r);
+		            	}
 		            }
 		            
 		            Game g = new Game(nome, reviews);
@@ -71,16 +73,6 @@ public class ReadJSON {
 			} 
 	          
 	        
-		}
-
-
-		public ArrayList<Review> getReviews() {
-			return reviews;
-		}
-
-
-		public void setReviews(ArrayList<Review> reviews) {
-			this.reviews = reviews;
 		}
 
 

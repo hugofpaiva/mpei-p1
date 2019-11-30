@@ -8,15 +8,13 @@ import org.json.simple.JSONObject;
 
 public class Main {
 	
-	private static ArrayList<Review> reviews = new ArrayList<>();
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
 	public static void main(String[] args) {
 		ReadJSON json = new ReadJSON();
 		json.read();
 		jogos = json.getJogos();
-		reviews = json.getReviews();
-		
+
 		// Cria�ao do bloom e inserir a HashFunction para o bloom usar
 		CBloom mybloom = new CBloom(jogos.size(), 0.1);
 		mybloom.initialize();
@@ -25,13 +23,13 @@ public class Main {
 		for (int i=0;i<jogos.size();i++) {
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
         	if (jogos.get(i).getName().equals("Might and MagicÂ® 6-pack Limited Edition")) {
-            	System.out.println(reviews.size());
+            	System.out.println("n de reviews de migth: "+reviews.size());
         	}
         	if (jogos.get(i).getName().equals("Galactic Civilizations III - Revenge of the Snathi DLC")) {
-    			System.out.println(reviews.size());
+    			System.out.println("n de reviews de galatic: "+reviews.size());
     		}
         	if (jogos.get(i).getName().equals("Enclave")) {
-    			System.out.println(reviews.size());
+    			System.out.println("n de reviews de enclave: "+reviews.size());
     		}
 
         	if (reviews.size() == 0) {
@@ -43,10 +41,13 @@ public class Main {
         	}
 		}
 		
-		System.out.println(mybloom.isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar false
-		System.out.println(mybloom.isEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar true
-		System.out.println(mybloom.numEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar 133
-		System.out.println(mybloom.numEle("Enclave")); // tem de dar 68, mas da 104
+		System.out.println("enclave tem quantas reviews? "+mybloom.isEle("Enclave")); // tem de dar true
+		System.out.println("galatic tem reviews? "+mybloom.isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar false
+		System.out.println("might tem reviews? "+ mybloom.isEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar true
+		
+		System.out.println("enclave tem quantas reviews? "+mybloom.numEle("Enclave")); // tem de dar 68
+		System.out.println("galatic tem quantas reviews? "+mybloom.numEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar 0
+		System.out.println("migth tem quantas reviews? "+mybloom.numEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar 133
 		
 		mybloom.deleteEle("Might and MagicÂ® 6-pack Limited Edition");
 		System.out.println(mybloom.isEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar false

@@ -5,26 +5,25 @@ import java.util.Random;
 
 public class HashFunction {
 	private static int max = 1000000;
-	private static int static_prime = 3089;
+	//private static int static_prime = 3089;
 	private ArrayList<Integer> seeds = new ArrayList<>();
 	private int[][] randValsA;
 	private int[][] randValsB;
 	private int n;
 	private int k;
-	private int prime=3089;
+	private int prime;
 	
-	public HashFunction(int k, int n) {
+	public HashFunction(int k, int n, int maxC) {
 		this.k=k;
 		this.n = n;
 
 		Random rand = new Random();
-		/*while (this.prime<2001 && !isPrime(this.prime)) {
+		while (this.prime<2001 && !isPrime(this.prime)) {
 			this.prime = Math.abs(rand.nextInt(max));
-			System.out.println(this.prime);
-		}*/
+		}
 		
-		 this.randValsA = new int[this.k][80];
-	     this.randValsB = new int[this.k][80];
+		 this.randValsA = new int[this.k][maxC];
+	     this.randValsB = new int[this.k][maxC];
 
 		 for (int i = 0; i < this.k; i++) {
 	            for (int j = 0; j < 80; j++) {

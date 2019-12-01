@@ -5,16 +5,16 @@ import java.util.Arrays;
 
 public class CBloom {
 	private Integer[] myBloom; // Couting Bloom
-	private int m; // número máximo de elementos a inserir
+	//private int m; // número máximo de elementos a inserir
 	private int n; // tamnho do bloom
     private int k; // número de hash functions
     private HashFunction hashFunction;
     
-	public CBloom(int m, double fator) {
-		 this.m = m;
+	public CBloom(int m, double fator, int maxC) {
+		 //this.m = m;
 	     this.n = (int) Math.round(m/fator);
 	     this.k = (int) Math.floor((n*Math.log(2)/m));
-	     this.hashFunction=new HashFunction(k, n);
+	     this.hashFunction=new HashFunction(k, n, maxC);
 	}
     
 	public void initialize() {

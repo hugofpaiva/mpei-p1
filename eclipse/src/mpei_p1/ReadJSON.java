@@ -1,11 +1,7 @@
 package mpei_p1;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,7 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class ReadJSON {
-		private ArrayList<Review> reviews;
+		//private ArrayList<Review> reviews;
 		private ArrayList<Game> jogos = new ArrayList<>();
 
 
@@ -21,7 +17,8 @@ public class ReadJSON {
 			try {
 				
 				// parse do dataset 
-		        ArrayList<JSONObject> obj = (ArrayList<JSONObject>) new JSONParser().parse(new FileReader("./dataset/games.json")); 		       
+		        @SuppressWarnings("unchecked")
+				ArrayList<JSONObject> obj = (ArrayList<JSONObject>) new JSONParser().parse(new FileReader("./dataset/games.json")); 		       
 		        
 		        for (JSONObject jogo : obj) {
 		        	// criação do nome do jogo

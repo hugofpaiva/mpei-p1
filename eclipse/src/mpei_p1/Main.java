@@ -1,10 +1,6 @@
 package mpei_p1;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import org.json.simple.JSONObject;
 
 public class Main {
 	
@@ -14,9 +10,18 @@ public class Main {
 		ReadJSON json = new ReadJSON();
 		json.read();
 		jogos = json.getJogos();
+		
+		
+		// function to calculate max length of the elements to be hashed
+		int maxC = 0;
+	    for (int i=0;i<jogos.size();i++) {	    	  
+	        if (jogos.get(i).getName().length() > maxC) {
+	            maxC = jogos.get(i).getName().length();
+	        }
+	    }
 
 		// Criaçao do bloom e inserir a HashFunction para o bloom usar
-		CBloom mybloom = new CBloom(jogos.size(), 0.1);
+		CBloom mybloom = new CBloom(jogos.size(), 0.1, maxC);
 		mybloom.initialize();
 		
 		

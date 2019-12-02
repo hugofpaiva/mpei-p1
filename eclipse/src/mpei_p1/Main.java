@@ -1,31 +1,45 @@
 package mpei_p1;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 	
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
 	public static void main(String[] args) {
+		
+	    long startTime = System.nanoTime();
+		
 		ReadJSON json = new ReadJSON();
 		json.read();
 		jogos = json.getJogos();
 		
-		
+		long stopTime = System.nanoTime();
+		long elapsedTime = startTime-stopTime;
+		double elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
+		long convert=TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+		System.out.println("Time elapsed to read json (ms): " + elapsedTimeInSecond);
 		// function to calculate max length of the elements to be hashed
 		int maxC = 0;
-	    for (int i=0;i<jogos.size();i++) {	    	  
+	    for (int i=0;i<jogos.size();i++) {
 	        if (jogos.get(i).getName().length() > maxC) {
 	            maxC = jogos.get(i).getName().length();
 	        }
 	    }
 
-		// Criaçao do bloom e inserir a HashFunction para o bloom usar
-		CBloom mybloom = new CBloom(jogos.size(), 0.01, maxC);
+
+
+	    long startTime1 = System.nanoTime();
+
+	    // Criaçao do bloom e inserir a HashFunction para o bloom usar
+		CBloom mybloom = new CBloom(jogos.size(), 0.1, maxC);
 		mybloom.initialize();
 		
-		int numIns=0;
+		long stopTime1 = System.nanoTime();
+		System.out.println("Time create bloom filter (ms): "+(stopTime1 - startTime1)/1_000_000_000);
 		
+		int numIns=0;
 		for (int i=0;i<jogos.size();i++) {
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
         	if (jogos.get(i).getName().equals("Might and MagicÃ‚Â® 6-pack Limited Edition")) {
@@ -69,6 +83,7 @@ public class Main {
 		
 		System.out.println("Numero de elementos inseridos no bloom: " + numIns);
 		System.out.println("Numero de elementos que estão no bloom: " + pos);
-		System.out.println("Numero de colisoes: "+ (numIns-pos));
+		System.out.println("Numero de colisoes: "+ (pos-numIns));
+		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10);
 	}
 }

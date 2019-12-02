@@ -5,10 +5,9 @@ import java.util.Random;
 
 public class HashFunction {
 	private static int max = 1000000;
-	//private static int static_prime = 3089;
 	private ArrayList<Integer> seeds = new ArrayList<>();
-	private int[][] randValsA;
-	private int[][] randValsB;
+	private int[][] randA;
+	private int[][] randB;
 	private int n;
 	private int k;
 	private int prime;
@@ -22,13 +21,13 @@ public class HashFunction {
 			this.prime = Math.abs(rand.nextInt(max));
 		}
 		
-		 this.randValsA = new int[this.k][maxC];
-	     this.randValsB = new int[this.k][maxC];
+		 this.randA = new int[this.k][maxC];
+	     this.randB = new int[this.k][maxC];
 
 		 for (int i = 0; i < this.k; i++) {
-	            for (int j = 0; j < 80; j++) {
-	                this.randValsA[i][j] = rand.nextInt(this.prime - 1);
-	                this.randValsB[i][j] = rand.nextInt(this.prime - 1);
+	            for (int j = 0; j < maxC; j++) {
+	                this.randA[i][j] = rand.nextInt(this.prime - 1);
+	                this.randB[i][j] = rand.nextInt(this.prime - 1);
 	            }
 	     }
 		
@@ -58,7 +57,7 @@ public class HashFunction {
 		for (int i=0; i< this.k; i++) {
 			int hash=0;
 			for (int j = 0; j < s.length(); j++) {
-				hash+=((randValsA[i][j]*(int) s.charAt(j) + randValsB[i][j]) % this.prime) % this.n;
+				hash+=((this.randA[i][j]*(int) s.charAt(j) + this.randB[i][j]) % this.prime) % this.n;
 			}
 			hashes.add(hash % n);
 		}

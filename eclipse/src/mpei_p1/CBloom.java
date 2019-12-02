@@ -41,8 +41,11 @@ public class CBloom {
 	public void deleteEle(String ele) {
 		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
 		if (isEle(ele)) {
-			for (int i=0;i<index.size();i++) {
-				myBloom[index.get(i)] = 0;
+			int numRem= numEle(ele);
+			for (int j=0;j<numRem;j++) {
+				for (int i=0;i<index.size();i++) {
+					myBloom[index.get(i)]--;
+				}
 			}
 		}
 	}

@@ -6,7 +6,7 @@ public class Review {
 	private String user;
 	private String review;
 	private ArrayList<String> shingles = new ArrayList<>();
-	private ArrayList<Integer> minhash_shingles = new ArrayList<>();
+	private int[] minhash_shingles=new int[100];
 	
 	
 	public Review(String user, String review) {
@@ -40,16 +40,16 @@ public class Review {
 		this.shingles = shingles;
 	}
 
-	public ArrayList<Integer> getminHash_shingles() {
+	public int[] getminHash_shingles() {
 		return minhash_shingles;
 	}
 
-	public void setminHash_shingles(ArrayList<Integer> hash_shingles) {
+	public void setminHash_shingles(int[] hash_shingles) {
 		this.minhash_shingles = hash_shingles;
 	}
 	
-	public void addminHash_shingles(Integer hash_s) {
-		this.minhash_shingles.add(hash_s);
+	public void addminHash_shingles(int hash_s, int pos) {
+		this.minhash_shingles[pos]=hash_s;
 	}
 
 	@Override

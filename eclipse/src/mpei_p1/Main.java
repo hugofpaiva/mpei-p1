@@ -31,7 +31,7 @@ public class Main {
 	    startTime = System.nanoTime();
 
 	    // CriaÁao do bloom e inserir a HashFunction para o bloom usar
-		CBloom reviewsBloom = new CBloom(jogos.size(), 0.1, maxCG);
+		CBloom reviewsBloom = new CBloom(jogos.size(), 0.01, maxCG);
 		reviewsBloom.initialize();
 		
 		stopTime = System.nanoTime();
@@ -42,7 +42,7 @@ public class Main {
 		int numIns=0;
 		for (int i=0;i<jogos.size();i++) {
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
-        	if (jogos.get(i).getName().equals("Might and Magic√Ç¬Æ 6-pack Limited Edition")) {
+        	if (jogos.get(i).getName().equals("Might and Magic® 6-pack Limited Edition")) {
             	System.out.println("n de reviews de migth: "+reviews.size());
         	}
         	if (jogos.get(i).getName().equals("Galactic Civilizations III - Revenge of the Snathi DLC")) {
@@ -60,13 +60,13 @@ public class Main {
         	}
 		}
 		
-		System.out.println("enclave tem quantas reviews? "+reviewsBloom.isEle("Enclave")); // tem de dar true
+		System.out.println("enclave tem reviews? "+reviewsBloom.isEle("Enclave")); // tem de dar true
 		System.out.println("galatic tem reviews? "+reviewsBloom.isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar false
-		System.out.println("might tem reviews? "+ reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar true
+		System.out.println("might tem reviews? "+ reviewsBloom.isEle("Might and Magic® 6-pack Limited Edition")); // tem de dar true
 		
 		System.out.println("enclave tem quantas reviews? "+reviewsBloom.numEle("Enclave")); // tem de dar 68
 		System.out.println("galatic tem quantas reviews? "+reviewsBloom.numEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar 0
-		System.out.println("migth tem quantas reviews? "+reviewsBloom.numEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar 133
+		System.out.println("migth tem quantas reviews? "+reviewsBloom.numEle("Might and Magic® 6-pack Limited Edition")); // tem de dar 133
 		
 		//reviewsBloom.deleteEle("Might and Magic√Ç¬Æ 6-pack Limited Edition");
 		//System.out.println(reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar false
@@ -84,18 +84,18 @@ public class Main {
 		System.out.println("Numero de elementos inseridos no bloom: " + numIns);
 		System.out.println("Numero de elementos que estão no bloom: " + pos);
 		System.out.println("Numero de colisoes: "+ (pos-numIns));
-		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10); //10 pq o professor disse
-		lol.getSimilar();
-		lol.printSimilar();
+		
 
 	}
 	
 	public static void main(String[] args) {
-		// teste(); tests to bloom
+		 teste();// tests to bloom
 		ReadJson();
 
-		display_menu();
-		
+		//display_menu();
+		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10); //10 pq o professor disse
+		//lol.getSimilar();
+		//lol.printSimilar();
 	}
 		  
 	
@@ -119,7 +119,7 @@ public class Main {
 				break;
 			case 4:
 				System.out.println ( "You picked option TESTES" );
-		        teste();
+				break;
 			default:
 				System.err.println ( "Unrecognized option" );
 				break;

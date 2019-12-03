@@ -30,7 +30,7 @@ public class Main {
 
 	    startTime = System.nanoTime();
 
-	    // Cria�ao do bloom e inserir a HashFunction para o bloom usar
+	    // CriaÁao do bloom e inserir a HashFunction para o bloom usar
 		CBloom reviewsBloom = new CBloom(jogos.size(), 0.1, maxCG);
 		reviewsBloom.initialize();
 		
@@ -42,7 +42,7 @@ public class Main {
 		int numIns=0;
 		for (int i=0;i<jogos.size();i++) {
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
-        	if (jogos.get(i).getName().equals("Might and MagicÂ® 6-pack Limited Edition")) {
+        	if (jogos.get(i).getName().equals("Might and Magic√Ç¬Æ 6-pack Limited Edition")) {
             	System.out.println("n de reviews de migth: "+reviews.size());
         	}
         	if (jogos.get(i).getName().equals("Galactic Civilizations III - Revenge of the Snathi DLC")) {
@@ -62,14 +62,14 @@ public class Main {
 		
 		System.out.println("enclave tem quantas reviews? "+reviewsBloom.isEle("Enclave")); // tem de dar true
 		System.out.println("galatic tem reviews? "+reviewsBloom.isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar false
-		System.out.println("might tem reviews? "+ reviewsBloom.isEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar true
+		System.out.println("might tem reviews? "+ reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar true
 		
 		System.out.println("enclave tem quantas reviews? "+reviewsBloom.numEle("Enclave")); // tem de dar 68
 		System.out.println("galatic tem quantas reviews? "+reviewsBloom.numEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar 0
-		System.out.println("migth tem quantas reviews? "+reviewsBloom.numEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar 133
+		System.out.println("migth tem quantas reviews? "+reviewsBloom.numEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar 133
 		
-		//reviewsBloom.deleteEle("Might and MagicÂ® 6-pack Limited Edition");
-		//System.out.println(reviewsBloom.isEle("Might and MagicÂ® 6-pack Limited Edition")); // tem de dar false
+		//reviewsBloom.deleteEle("Might and Magic√Ç¬Æ 6-pack Limited Edition");
+		//System.out.println(reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar false
 		
 		double pfp=Math.pow(1-Math.pow(1-1/reviewsBloom.getN(), reviewsBloom.getK()*reviewsBloom.getM()), reviewsBloom.getK());
 		System.out.println("Probabilidade de falso positivo: " + pfp);
@@ -82,9 +82,12 @@ public class Main {
 		}
 		
 		System.out.println("Numero de elementos inseridos no bloom: " + numIns);
-		System.out.println("Numero de elementos que est�o no bloom: " + pos);
+		System.out.println("Numero de elementos que estão no bloom: " + pos);
 		System.out.println("Numero de colisoes: "+ (pos-numIns));
-		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10);
+		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10); //10 pq o professor disse
+		lol.getSimilar();
+		lol.printSimilar();
+
 	}
 	
 	public static void main(String[] args) {
@@ -98,7 +101,7 @@ public class Main {
 	
 
  static void display_menu() {
-	    System.out.println ( "1) Search by game\n2) See the similarities in the reviews of a game\n3) See our program data " );
+	    System.out.println ( "1) Search by game\n2) See the similarities in the reviews of a game\n3) See our program data\n4) Test our program" );
 	    System.out.print ( "Selection: " );
 	    
 	    Scanner in = new Scanner ( System.in );
@@ -114,6 +117,9 @@ public class Main {
 				System.out.println("Our dataset contains "+jogos.size()+" games.");
 				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");
 				break;
+			case 4:
+				System.out.println ( "You picked option TESTES" );
+		        teste();
 			default:
 				System.err.println ( "Unrecognized option" );
 				break;

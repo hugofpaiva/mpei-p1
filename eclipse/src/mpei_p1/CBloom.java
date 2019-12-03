@@ -5,9 +5,9 @@ import java.util.Arrays;
 
 public class CBloom {
 	private Integer[] myBloom; // Couting Bloom
-	private int m; // número máximo de elementos a inserir
+	private int m; // nï¿½mero mï¿½ximo de elementos a inserir
 	private int n; // tamnho do bloom
-    private int k; // número de hash functions
+    private int k; // nï¿½mero de hash functions
     private HashFunction hashFunction;
     
 	public CBloom(int m, double fator, int maxC) {
@@ -53,12 +53,12 @@ public class CBloom {
 	public void insertEle(String ele) {
 		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
 		for (int i=0;i<index.size();i++) {
-			myBloom[index.get(i)]++;
+			myBloom[index.get(i)]++;// Deu "Index -3925 out of bounds for length 27420"
 		}
 	}
 	
 	public int numEle(String ele) {
-	    int min = Integer.MAX_VALUE; // verificaçao para evitar caso dê overflows acho eu
+	    int min = Integer.MAX_VALUE; // verificaï¿½ao para evitar caso dï¿½ overflows acho eu
 	    ArrayList<Integer> index= hashFunction.generateHash_S(ele);
 		for (int i=0;i<index.size();i++) {
 		    if (myBloom[index.get(i)] < min)

@@ -13,8 +13,9 @@ public class HashFunction {
 	private int prime;
 	
 	public HashFunction(int k, int n, int maxC) {
-		this.k=k;
-		this.n = n;
+		this.k=k;//num hash functions
+		this.n = n;//nº elementos do bloom
+		//Maxc tamanho máximo que as strings têm
 
 		Random rand = new Random();
 		while (this.prime<2001 && !isPrime(this.prime)) {

@@ -43,7 +43,7 @@ public class HashFunction {
 	}
 
 	// Gerar Hash para String
-	public ArrayList<Integer> generateHash_S(String s) {
+	public ArrayList<Integer> generateHash(String s) {
 		ArrayList<Integer> hashes = new ArrayList<>();
 	/*	int max= Integer.MAX_VALUE;
 		for (int i = 0; i < seeds.size(); i++) {
@@ -61,6 +61,29 @@ public class HashFunction {
 				hash+=((this.randA[i][j]*(int) s.charAt(j) + this.randB[i][j]) % this.prime) % this.n;
 			}
 			hashes.add(hash % n);
+		}
+		return hashes;
+	}
+	
+	public ArrayList<Integer> generateHash_S(ArrayList<String> s) {
+		ArrayList<Integer> hashes = new ArrayList<>();
+		int min;
+		int hash;
+		min = Integer.MAX_VALUE;
+		for (int i=0; i< this.k; i++) {
+			for(String shingle : s) {
+				hash=0;
+				min = Integer.MAX_VALUE;
+				for (int j = 0; j < shingle.length(); j++) {
+					hash+=((this.randA[i][j]*(int) shingle.charAt(j) + this.randB[i][j]) % this.prime) % this.n;
+				}
+				hash = hash % n;
+				if( hash < min) {
+					min=hash;
+				}
+			}
+			hashes.add(min);
+			
 		}
 		return hashes;
 	}

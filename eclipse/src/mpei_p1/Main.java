@@ -93,7 +93,6 @@ public class Main {
 	public static void main(String[] args) {
 		// teste(); tests to bloom
 		ReadJson();
-
 		display_menu();
 		
 	}
@@ -106,7 +105,7 @@ public class Main {
 	    
 	    Scanner in = new Scanner ( System.in );
 	    
-		switch ( in.nextInt() ) {
+		switch (in.nextInt()) {
 			case 1:
 		        System.out.println ( "You picked option 1" );
 		        break;

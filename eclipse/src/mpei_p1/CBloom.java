@@ -29,7 +29,7 @@ public class CBloom {
 	}
 
 	public boolean isEle(String ele) {
-		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
+		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		for (int i=0;i<index.size();i++) {
 			if (myBloom[index.get(i)] == 0) {
 				return false;
@@ -39,7 +39,7 @@ public class CBloom {
 	}
 	
 	public void deleteEle(String ele) {
-		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
+		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		if (isEle(ele)) {
 			int numRem= numEle(ele);
 			for (int j=0;j<numRem;j++) {
@@ -51,7 +51,7 @@ public class CBloom {
 	}
 
 	public void insertEle(String ele) {
-		ArrayList<Integer> index= hashFunction.generateHash_S(ele);
+		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		for (int i=0;i<index.size();i++) {
 			myBloom[index.get(i)]++;// Deu "Index -3925 out of bounds for length 27420"
 		}
@@ -59,7 +59,7 @@ public class CBloom {
 	
 	public int numEle(String ele) {
 	    int min = Integer.MAX_VALUE; // verifica�ao para evitar caso d� overflows acho eu
-	    ArrayList<Integer> index= hashFunction.generateHash_S(ele);
+	    ArrayList<Integer> index= hashFunction.generateHash(ele);
 		for (int i=0;i<index.size();i++) {
 		    if (myBloom[index.get(i)] < min)
 		    	min = myBloom[index.get(i)];

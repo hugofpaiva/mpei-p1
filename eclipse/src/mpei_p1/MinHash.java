@@ -16,7 +16,7 @@ public class MinHash {
 		similar = new double[reviews.size()][reviews.size()];
 		this.reviews = reviews;
 		this.s_shingle = s_shingle;
-		this.hash_shingle = new HashFunction(100, Integer.MAX_VALUE, s_shingle);
+		this.hash_shingle = new HashFunction(100, 877, s_shingle);
 		for (int i = 0; i < reviews.size(); i++) {
 			create_shingles(reviews.get(i));	
 		}
@@ -47,24 +47,25 @@ public class MinHash {
 		//Criar as hashes e guardar neste objeto review
 		ArrayList<String> shingles = review.getShingles();
 		ArrayList<Integer> hashes;
-		for (int i=0;i<shingles.size();i++) {
-			hashes=this.hash_shingle.generateHash_S(shingles.get(i));
-			//ordenação para ir buscar o valor mais pequeno
-			Collections.sort(hashes);
-			review.addminHash_shingles(hashes.get(0));		
-		}	
+		hashes=this.hash_shingle.generateHash_S(shingles);
+		review.setminHash_shingles(hashes);
+
 	}
 		
 	public double similarity(Review review1, Review review2) {
-		int common = 0;
+		double common = 0.0;
+		double total;
 		ArrayList<Integer> hashes1 = review1.getminHash_shingles();
 		ArrayList<Integer> hashes2 = review2.getminHash_shingles();
-		int total = hashes1.size()+hashes2.size();
+		System.out.println("hash1 - " + hashes1.size() + " | \nhash2 - " + hashes2.size());
+
+		total = hashes1.size()+hashes2.size();
 		for (int i = 0; i < hashes1.size(); i++) {
-				for (int l = 0; l < hashes2.size(); l++) {
-					if(hashes1.get(i)==hashes2.get(l))
-						System.out.println("hash1 - " + hashes1.get(i) + " | hash2 - " + hashes2.get(l));
-						common++;		
+				if(hashes2.contains(hashes1.get(i))) {
+					for (int l = 0; l < hashes2.size(); l++) {
+						if(hashes1.get(i)==hashes2.get(l))
+							common=common+1.0;	
+				}	
 			}
 		}
 		double jacart_coeficient = common/(total-common);
@@ -87,6 +88,42 @@ public class MinHash {
 			}
 		}
 	}
+	
+	
+	public boolean isPrime(int n) {
+		int m = n / 2;
+		if (n == 0 || n == 1) {
+			return false;
+		} else {
+			for (int l = 2; l < m; l++) {
+				if (n % l == 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+
+	}
+	
+	public int next_2Prime(int N)  
+    {  
+       
+        if (N <= 1)  
+            return 2;  
+        int num = 0;
+        int prime = N;  
+        boolean found = false;  
+        while(num!=2) {
+	        while (!isPrime(prime))  
+	        {  
+	            prime++; 
+	      
+	        }  
+	        num++;
+        }
+      
+        return prime;  
+    } 
 	
 	
 	

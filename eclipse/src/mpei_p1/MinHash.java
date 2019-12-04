@@ -11,17 +11,20 @@ public class MinHash {
 	int s_shingle;// tamanho das shingles
 	private HashFunction hash_shingle;
 	private double[][] similar;
+	private int max=0; //Maior número de shingles que temos numa review é 8754
+	
 
 	public MinHash(ArrayList<Review> reviews, int s_shingle) {
 		similar = new double[reviews.size()][reviews.size()];
 		this.reviews = reviews;
 		this.s_shingle = s_shingle;
-		this.hash_shingle = new HashFunction(100, 877, s_shingle);
+		this.hash_shingle = new HashFunction(100, Integer.MAX_VALUE, s_shingle);
 		for (int i = 0; i < reviews.size(); i++) {
-			create_shingles(reviews.get(i));	
+			create_shingles(reviews.get(i), i);	
 		}
+		System.out.println("Maior número de shingles numa review: "+max);
 		for (int i = 0; i < reviews.size(); i++) {
-			create_hash(reviews.get(i));	
+			create_hash(reviews.get(i));
 		}
 		
 		for (int i = 0; i < reviews.size(); i++) {
@@ -32,13 +35,17 @@ public class MinHash {
 		
 	}
 
-	public void create_shingles(Review review) {
+	public void create_shingles(Review review,int l) {
 		//Leitura da string e transformação em shingles
+		int temp=0;
 		String string = review.getReview();
 		String string_no_space = string.replaceAll("\\s+", "");
 		int num_shingles = string_no_space.length() - s_shingle + 1;
 		for (int i = 0; i < (num_shingles); i++) {
 			review.addShingles(string_no_space.substring(i, i + s_shingle));// Vou buscar a palavra de i até i+s_shingle
+			temp++;
+			if(temp> max)
+				max=temp;
 		}
 		
 	}
@@ -57,9 +64,9 @@ public class MinHash {
 		double total;
 		ArrayList<Integer> hashes1 = review1.getminHash_shingles();
 		ArrayList<Integer> hashes2 = review2.getminHash_shingles();
-		System.out.println("hash1 - " + hashes1.size() + " | \nhash2 - " + hashes2.size());
+		//System.out.println("hash1 - " + hashes1 + " | \nhash2 - " + hashes2);
 
-		total = hashes1.size()+hashes2.size();
+		total = review1.getShingles().size()+review2.getShingles().size();
 		for (int i = 0; i < hashes1.size(); i++) {
 				if(hashes2.contains(hashes1.get(i))) {
 					for (int l = 0; l < hashes2.size(); l++) {
@@ -69,7 +76,8 @@ public class MinHash {
 			}
 		}
 		double jacart_coeficient = common/(total-common);
-		System.out.println("Total - " + total + " | common - " +common + " | coeficiente - " + jacart_coeficient);
+		
+			System.out.println("Total - " + total + " | common - " +common + " | coeficiente - " + jacart_coeficient);
 		return jacart_coeficient;
 	}
 
@@ -84,7 +92,12 @@ public class MinHash {
 	public void printSimilar() {
 		for (int i = 0; i < reviews.size(); i++) {
 			for(int l = 1; i<reviews.size();i++) {
-				System.out.println(similar[i][l]);
+				if(similar[i][l]>0.1) {
+					System.out.println(similar[i][l]);
+					System.out.println(reviews.get(i).getReview());
+					System.out.println(reviews.get(l).getReview());
+				}
+				
 			}
 		}
 	}
@@ -105,25 +118,7 @@ public class MinHash {
 
 	}
 	
-	public int next_2Prime(int N)  
-    {  
-       
-        if (N <= 1)  
-            return 2;  
-        int num = 0;
-        int prime = N;  
-        boolean found = false;  
-        while(num!=2) {
-	        while (!isPrime(prime))  
-	        {  
-	            prime++; 
-	      
-	        }  
-	        num++;
-        }
-      
-        return prime;  
-    } 
+	
 	
 	
 	

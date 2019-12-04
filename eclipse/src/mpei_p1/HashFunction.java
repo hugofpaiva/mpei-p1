@@ -32,29 +32,12 @@ public class HashFunction {
 	            }
 	     }
 		
-			
-			/*
-		for (int i = 0; i < k; i++) {
-			while (!isPrime(prime) && !seeds.contains(prime)) {
-				prime = Math.abs(rand.nextInt(max));
-			}
-			this.seeds.add(prime);
-		} */
+		
 	}
 
 	// Gerar Hash para String
 	public ArrayList<Integer> generateHash(String s) {
 		ArrayList<Integer> hashes = new ArrayList<>();
-	/*	int max= Integer.MAX_VALUE;
-		for (int i = 0; i < seeds.size(); i++) {
-			int hash = 0;
-			for (int z = 0; z < s.length(); z++) {
-				if (((hash+static_prime*seeds.get(i) * (int) s.charAt(z)) % n) > 0) {
-					hash += (static_prime*seeds.get(i) * (int) s.charAt(z)) % n;
-				}
-			}
-			hashes.add(hash % n);
-		} */
 		for (int i=0; i< this.k; i++) {
 			int hash=0;
 			for (int j = 0; j < s.length(); j++) {
@@ -75,9 +58,9 @@ public class HashFunction {
 				hash=0;
 				min = Integer.MAX_VALUE;
 				for (int j = 0; j < shingle.length(); j++) {
-					hash+=((this.randA[i][j]*(int) shingle.charAt(j) + this.randB[i][j]) % this.prime) % this.n;
+					hash+=((this.randA[i][j]*(int) shingle.charAt(j) + this.randB[i][j]) % this.prime);
 				}
-				hash = hash % n;
+				hash=hash%n;
 				if( hash < min) {
 					min=hash;
 				}

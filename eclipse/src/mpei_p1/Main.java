@@ -93,9 +93,21 @@ public class Main {
 		ReadJson();
 
 		//display_menu();
-		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10); //10 pq o professor disse
+		ArrayList<Review> reviews= new ArrayList<>();
+		int size=0;
+		for (Game jogo : jogos) {
+			for(Review r: jogo.getReviews()) {
+			size++;
+	
+			if (size<=1000) {
+				reviews.add(r);
+			}
+		}}
+		//System.out.println(reviews);
+
+		MinHash lol = new MinHash(reviews, 10); //10 pq o professor disse
 		
-		lol.printSimilarities(0.07);
+		lol.printSimilars(0.5); // Limiar de distancia, qnt mais pequeno mais similar sao
 	}
 		  
 	

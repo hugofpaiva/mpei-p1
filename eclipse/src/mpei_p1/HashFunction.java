@@ -18,7 +18,7 @@ public class HashFunction {
 		//Maxc tamanho máximo que as strings têm
 
 		Random rand = new Random();
-		while (this.prime<2001 && !isPrime(this.prime)) {
+		while (this.prime<20000 && !isPrime(this.prime)) {
 			this.prime = Math.abs(rand.nextInt(max));
 		}
 		
@@ -29,30 +29,12 @@ public class HashFunction {
                 this.randA[i] = rand.nextInt(this.prime - 1);
                 this.randB[i] = rand.nextInt(this.prime - 1);
 	     }
-		
-			
-			/*
-		for (int i = 0; i < k; i++) {
-			while (!isPrime(prime) && !seeds.contains(prime)) {
-				prime = Math.abs(rand.nextInt(max));
-			}
-			this.seeds.add(prime);
-		} */
 	}
 
 	// Gerar Hash para String
 	public ArrayList<Integer> generateHash_S(String s) {
 		ArrayList<Integer> hashes = new ArrayList<>();
-	/*	int max= Integer.MAX_VALUE;
-		for (int i = 0; i < seeds.size(); i++) {
-			int hash = 0;
-			for (int z = 0; z < s.length(); z++) {
-				if (((hash+static_prime*seeds.get(i) * (int) s.charAt(z)) % n) > 0) {
-					hash += (static_prime*seeds.get(i) * (int) s.charAt(z)) % n;
-				}
-			}
-			hashes.add(hash % n);
-		} */
+	
 		for (int i=0; i< this.k; i++) {
 			int hash=0;
 			for (int j=0;j<s.length();j++) {
@@ -66,6 +48,31 @@ public class HashFunction {
 		return hashes;
 	}
 
+	public int[] generateSignatures(ArrayList<String> shingles) {
+		int sign[]=new int[100];
+		for (int j=0;j<100;j++) {
+			int min=Integer.MAX_VALUE;
+			for (int i = 0; i < shingles.size(); i++) {
+				String s=shingles.get(i);
+				int hash=0;
+				for (int l=0;l<s.length();l++) {
+					hash+=((randA[j]*(int) s.charAt(l) + randB[j]) % prime) % n;
+				}
+				if (hash<0) {
+					hash+=n;
+				}
+				int hashCode= (hash % n);
+				if (hashCode<min) {
+					min=hashCode;
+				}
+			}
+			sign[j]=min;
+		}
+		return sign;
+	}
+	
+	
+	
 	public int[] getRandA() {
 		return randA;
 	}

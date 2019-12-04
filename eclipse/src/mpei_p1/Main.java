@@ -94,8 +94,8 @@ public class Main {
 
 		//display_menu();
 		MinHash lol = new MinHash(jogos.get(0).getReviews(), 10); //10 pq o professor disse
-		//lol.getSimilar();
-		//lol.printSimilar();
+		
+		lol.printSimilarities(0.07);
 	}
 		  
 	

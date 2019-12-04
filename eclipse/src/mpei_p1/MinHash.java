@@ -9,6 +9,7 @@ public class MinHash {
 	int s_shingle;// tamanho das shingles
 	private HashFunction hash_shingle;
 	private double[][] similar; // array multidimensional com 100 rows e x colunas (cada coluna representa uma review)
+	private double[][] similarities;
 
 	public MinHash(ArrayList<Review> reviews, int s_shingle) {
 		similar = new double[reviews.size()][reviews.size()];
@@ -22,14 +23,46 @@ public class MinHash {
 	}
 
 	private void createMatrix() {
-		similar=new double[100][reviews.size()];
+		this.similar=new double[100][reviews.size()];
 		for (int i=0; i<this.reviews.size();i++) {
 			int[] minHashShingles=reviews.get(i).getminHash_shingles();
 			for (int row=0;row<100;row++) {
-				similar[row][i]=minHashShingles[row];
+				this.similar[row][i]=minHashShingles[row];
 			}
 		}
-		System.out.println(Arrays.deepToString(similar).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+		//System.out.println(Arrays.deepToString(similar).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
+		this.similarities=new double[reviews.size()][reviews.size()];
+		
+		for (int i=0;i<this.reviews.size()-1;i++) {
+			for (int j=0;j<reviews.size();j++) {
+				double intersect= 0;
+				for (int row=0;row<100;row++) {
+					if (this.similar[row][i]==this.similar[row][j]) {
+						intersect++;
+					}
+				}
+				double union=100;
+				if (intersect!=100.0) {
+					union=(100.0-intersect);
+				}
+				double coefJac=(intersect/union);
+				similarities[i][j]=coefJac;
+			}
+		}
+	}
+	public void printSimilarities(double grau) {
+		for (int i=0; i<reviews.size()-1;i++) {
+			for (int j=i+1;j<reviews.size();j++) {
+				if (i != j) {
+					if (similarities[i][j] > grau) {
+						System.out.printf("\n");
+						System.out.printf("Reviews com Grau Similariedade de Jaccard de %f.\n",similarities[i][j]);
+						System.out.printf("\tUtilizador: %s\n\t\tConteúdo da review: %s\n\tUtilizador: %s\n\t\tConteúdo da review: %s",reviews.get(i).getUser(),reviews.get(i).getReview(),reviews.get(j).getUser(),reviews.get(j).getReview());
+						System.out.printf("\n");
+					}
+				}
+			}
+		}
 	}
 
 	public void minHashShingles(Review review) {

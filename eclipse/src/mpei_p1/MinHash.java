@@ -1,75 +1,89 @@
 package mpei_p1;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 public class MinHash {
 
 	private ArrayList<Review> reviews;
 	int s_shingle;// tamanho das shingles
 	private HashFunction hash_shingle;
-	private double[][] similar;
+	private double[][] similar; // array multidimensional com 100 rows e x colunas (cada coluna representa uma review)
 
 	public MinHash(ArrayList<Review> reviews, int s_shingle) {
 		similar = new double[reviews.size()][reviews.size()];
 		this.reviews = reviews;
 		this.s_shingle = s_shingle;
-		this.hash_shingle = new HashFunction(100, Integer.MAX_VALUE, s_shingle);
+		this.hash_shingle = new HashFunction(100, Integer.MAX_VALUE);
 		for (int i = 0; i < reviews.size(); i++) {
-			create_shingles(reviews.get(i));	
+			reviews.get(i).createShingles(s_shingle); // criar shingles de todas as reviews
+			reviews.get(i).setminHash_shingles(this.hash_shingle.generateSignatures(reviews.get(i).getShingles())); // gerar assinaturas de todas as reviews
 		}
-		for (int i = 0; i < reviews.size(); i++) {
-			create_hash(reviews.get(i));	
-		}
-		
-		for (int i = 0; i < reviews.size(); i++) {
-			for(int l = 1; i<reviews.size();i++) {
-				similar[i][l]=similarity(reviews.get(i), reviews.get(l));
-			}
-		}
-		
+		createMatrix();
 	}
 
-	public void create_shingles(Review review) {
-		//Leitura da string e transformação em shingles
+	private void createMatrix() {
+		this.similar=new double[100][reviews.size()];
+		for (int i=0; i<this.reviews.size();i++) {
+			int[] minHashShingles=reviews.get(i).getminHash_shingles();
+			for (int row=0;row<100;row++) {
+				this.similar[row][i]=minHashShingles[row];
+			}
+		}		
+	}
+	
+	public void printSimilars(double limiar) {
+		double intersections, distJac;
+		for (int i=0; i<reviews.size()-1;i++) {
+			for (int j=i+1;j<reviews.size();j++) {
+				intersections =intersect(i, j) / 100;
+				distJac=(1-intersections);
+				if (distJac <= limiar) {
+					System.out.printf("\nReviews com Grau Similariedade de Jaccard de %f.\n",distJac);
+					System.out.printf("\tUtilizador: %s\n\t\tConte�do da review: %s\n\tUtilizador: %s\n\t\tConte�do da review: %s\n",reviews.get(i).getUser(),reviews.get(i).getReview(),reviews.get(j).getUser(),reviews.get(j).getReview());
+				}
+			}
+		}
+	}
+	
+	public double intersect(int i, int j) {
+        double intersect = 0;
+        for (int row = 0; row < 100; row++) {
+            if (similar[row][i] == similar[row][j]) {
+                intersect++;
+            }
+        }
+        return intersect;
+    }
+
+	public void minHashShingles(Review review) {
 		String string = review.getReview();
 		String string_no_space = string.replaceAll("\\s+", "");
 		int num_shingles = string_no_space.length() - s_shingle + 1;
-		for (int i = 0; i < (num_shingles); i++) {
-			review.addShingles(string_no_space.substring(i, i + s_shingle));// Vou buscar a palavra de i até i+s_shingle
-		}
 		
-	}
-	
-	public void create_hash(Review review) {
-		//Criar as hashes e guardar neste objeto review
-		ArrayList<String> shingles = review.getShingles();
-		ArrayList<Integer> hashes;
-		for (int i=0;i<shingles.size();i++) {
-			hashes=this.hash_shingle.generateHash_S(shingles.get(i));
-			//ordenação para ir buscar o valor mais pequeno
-			Collections.sort(hashes);
-			review.addminHash_shingles(hashes.get(0));		
-		}	
-	}
+		int[] randA=this.hash_shingle.getRandA();
+		int[] randB=this.hash_shingle.getRandB();
+		int prime=this.hash_shingle.getPrime();
+		int n=this.hash_shingle.getN();
 		
-	public double similarity(Review review1, Review review2) {
-		int common = 0;
-		ArrayList<Integer> hashes1 = review1.getminHash_shingles();
-		ArrayList<Integer> hashes2 = review2.getminHash_shingles();
-		int total = hashes1.size()+hashes2.size();
-		for (int i = 0; i < hashes1.size(); i++) {
-				for (int l = 0; l < hashes2.size(); l++) {
-					if(hashes1.get(i)==hashes2.get(l))
-						System.out.println("hash1 - " + hashes1.get(i) + " | hash2 - " + hashes2.get(l));
-						common++;		
+		for (int j=0;j<100;j++) {
+			int min=Integer.MAX_VALUE;
+			for (int i = 0; i < num_shingles; i++) {
+				String s=string_no_space.substring(i, i + s_shingle);
+				int hash=0;
+				for (int l=0;l<s.length();l++) {
+					hash+=((randA[j]*(int) s.charAt(l) + randB[j]) % prime) % n;
+				}
+				if (hash<0) {
+					hash+=n;
+				}
+				int hashCode= (hash % n);
+				if (hashCode<min) {
+					min=hashCode;
+				}
 			}
+			review.addminHash_shingles(min, j);
 		}
-		double jacart_coeficient = common/(total-common);
-		System.out.println("Total - " + total + " | common - " +common + " | coeficiente - " + jacart_coeficient);
-		return jacart_coeficient;
 	}
 
 	public double[][] getSimilar() {
@@ -87,10 +101,4 @@ public class MinHash {
 			}
 		}
 	}
-	
-	
-	
-					
-			
-	
 }

@@ -104,7 +104,7 @@ public class Main {
 
 				MinHash lol = new MinHash(reviews, 10); //10 pq são frases grandes
 				
-				lol.printSimilars(0.5); // Limiar de distancia, qnt mais pequeno mais similar sao
+				lol.printSimilars_r(0.5); // Similariedade, quanto maior mais similares são. Entre 0 e 1
 	}
 	
 	public static void language() throws java.lang.InterruptedException {	    
@@ -162,8 +162,16 @@ public class Main {
 		
 	}
 	
+	private static void similar_games(String name) {
+		
+
+		MinHash lol = new MinHash(3, jogos); //5 pq são nomes pequenos
+		
+		lol.printSimilars_j(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+		
+	}
+	
 	public static void main(String[] args) throws java.lang.InterruptedException {
-		// teste(); tests to bloom
 		ReadJson();
 		display_menu();
 		
@@ -172,6 +180,8 @@ public class Main {
 	
 
  static void display_menu() throws java.lang.InterruptedException {
+	 System.out.print("Welcome to infogames!\n");
+	 TimeUnit.SECONDS.sleep(1);
 	    System.out.println ( "1) Search by game\n2) See the similarities in the reviews of a game\n3) See our program data\n4) Test our program\n5) See Language Info" );
 	    System.out.print ( "Selection: " );
 	    
@@ -179,22 +189,33 @@ public class Main {
 	    
 		switch (in.nextInt()) {
 			case 1:
-		        System.out.println ( "You picked option 1" );
+				String name;
+		        System.out.println ( "Insert a game and get info about it" );
+		        Scanner j = new Scanner ( System.in );
+		        name = j.nextLine();
+		        System.out.println(name);
+		        similar_games(name);
+		        
+		        
+		        
+		        
+		        
 		        break;
 			case 2:
 				System.out.println ( "You picked option 2" );
 				break;
 			case 3:
 				System.out.println("Our dataset contains "+jogos.size()+" games.");
-				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");
-				
+				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");		
 				break;
 			case 4:
 				System.out.println ( "You picked option TESTES" );
 		        teste();
+		        break;
 			case 5:
 				System.out.println ( "You picked option Language Info" );
 		        language();
+		        break;
 			default:
 				System.err.println ( "Unrecognized option" );
 				break;
@@ -231,6 +252,6 @@ public class Main {
 	}
 	
 	public void InterruptedException() {
-		System.out.println("Não consegui parar");
+		System.err.println("Error doing sleep");
 	}
 }

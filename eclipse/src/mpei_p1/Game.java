@@ -8,13 +8,14 @@ public class Game {
 	private ArrayList<String> genres;
 	private ArrayList<Language> languages;
 	private double price;
+	private double rating;
 	private String publisher;
 	private String developer;
 	private ArrayList<String> shingles_name = new ArrayList<>();
 	private int[] minhash_shingles_name = new int[100];
 	
 	
-	public Game(String nome, ArrayList<Review> reviews, ArrayList<String> genres, ArrayList<Language> languages, double price, String publisher, String developer) {
+	public Game(String nome, ArrayList<Review> reviews, ArrayList<String> genres, ArrayList<Language> languages, double price, String publisher, String developer, double rating) {
 		this.name = nome;
 		this.reviews=reviews;
 		this.genres=genres;
@@ -22,6 +23,7 @@ public class Game {
 		this.price=price;
 		this.publisher=publisher;
 		this.developer=developer;
+		this.rating=rating;
 		
 	}
 	
@@ -71,6 +73,15 @@ public class Game {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	
+
+	public double getRating() {
+		return rating;
+	}
+
+	public void setRating(double rating) {
+		this.rating = rating;
 	}
 
 	public String getPublisher() {

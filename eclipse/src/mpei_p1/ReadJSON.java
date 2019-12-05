@@ -49,6 +49,9 @@ public class ReadJSON {
 		            //Criação do price do jogo
 		            double price = (double) jogo.get("price");
 		            
+		          //Criação do rating do jogo
+		            double rating = (double) jogo.get("player_rating");
+		            
 		            //Criação do publisher do jogo
 		            String publisher = (String) jogo.get("publisher");
 		            
@@ -73,7 +76,7 @@ public class ReadJSON {
 		            	}
 		            }
 		            
-		            Game g = new Game(nome, reviews, genres, languages, price, publisher, developer);
+		            Game g = new Game(nome, reviews, genres, languages, price, publisher, developer, rating);
 		        	jogos.add(g);
 		     	    		        			        	
 		        		

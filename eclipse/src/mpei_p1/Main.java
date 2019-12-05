@@ -2,11 +2,18 @@ package mpei_p1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
 	static int numNoRev, numRev;
+	private static CBloom reviewsBloom;
+	private static CBloom noReviewsBloom;
+	private static Boolean found_game=false;
+	private static HashMap<String, CBloom> linguagens = new HashMap<>(); 
+	private static HashMap<String, CBloom> linguagens_text = new HashMap<>(); 
+	private static HashMap<String, CBloom> linguagens_audio = new HashMap<>(); 
 	
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
@@ -96,27 +103,24 @@ public class Main {
 					for(Review r: jogo.getReviews()) {
 					size++;
 			
-					if (size<=1000) {
+
 						reviews.add(r);
-					}
+				
 				}}
 				//System.out.println(reviews);
 
 				MinHash lol = new MinHash(reviews, 10); //10 pq são frases grandes
 				
-				lol.printSimilars_r(0.5); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+				lol.printSimilars_r(90); // Similariedade, quanto maior mais similares são. Entre 0 e 1
 	}
 	
-	public static void language() throws java.lang.InterruptedException {	    
+	public static ArrayList<String> language() {	    
 		//Bloom para determinar se um jogo tem uma certa linguagem 
 			   
 		ArrayList<String> languages = new ArrayList<>();
-	    HashMap<String, CBloom> linguagens = new HashMap<>(); 
-	    HashMap<String, CBloom> linguagens_text = new HashMap<>(); 
-	    HashMap<String, CBloom> linguagens_audio = new HashMap<>(); 
 		for(Game jogo:jogos) {
 			for(Language lang:jogo.getLanguages()) {
-				if(!languages.contains(lang.getName())) {
+				if(!languages.contains(lang.getName()) && !lang.getName().isBlank()) {
 					languages.add(lang.getName());
 					//Bloom para determinar se um jogo tem uma certa linguagem 
 					CBloom l = new CBloom(jogos.size(), 0.1); // bloom
@@ -131,70 +135,206 @@ public class Main {
 					l_audioBloom.initialize();
 					linguagens_audio.put(lang.getName(), l_audioBloom);
 				}
-				
+				else if(!lang.getName().isBlank()) {
 				CBloom l = linguagens.get(lang.getName());
-				
 				l.insertEle(jogo.getName());
-				/*if(jogo.getName().equals("Galactic Civilizations III - Revenge of the Snathi DLC")) {
-					System.out.println(lang.getName());
-					System.out.println("É este");
-					System.out.println(l.isEle("Galactic Civilizations III - Revenge of the Snathi DLC"));}*/
-				
+				if(lang.getText()) {
 				CBloom l_textBloom = linguagens_text.get(lang.getName());
 				l_textBloom.insertEle(jogo.getName());
+				}
+				if(lang.getAudio()) {
 				CBloom l_audioBloom = linguagens_audio.get(lang.getName());
 				l_audioBloom.insertEle(jogo.getName());
-				
+					}
+				}
 			}
-		}
-		System.out.println(languages);
+		}	
+		return languages;
 		
-		
-		TimeUnit.SECONDS.sleep(1);
+		/*
 		System.out.println("------------------Dados do BLOOM------------------");
 		System.out.println("enclave tem Português do Brasil? "+linguagens.get("Português do Brasil").isEle("Enclave")); // tem de dar false
 		System.out.println("enclave tem český? "+linguagens.get("český").isEle("Enclave")); // tem de dar false
 		System.out.println("enclave tem nederlands? "+linguagens.get("nederlands").isEle("Enclave")); // tem de dar false
 		System.out.println("galatic tem русский? "+linguagens.get("русский").isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar true
 		System.out.println("might tem norsk? "+ linguagens.get("norsk").isEle("Might and Magic® 6-pack Limited Edition")); // tem de dar false
+		System.out.println("Teenagent tem polski e texto dela? "+ linguagens.get("polski").isEle("Teenagent") + linguagens_text.get("polski").isEle("Teenagent") ); // tem de dar false
+
+*/
 			
 		
 		
 	}
 	
-	private static void similar_games(String name) {
-		
-
-		MinHash lol = new MinHash(3, jogos); //5 pq são nomes pequenos
-		
-		lol.printSimilars_j(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
-		
+	public static void goback() throws java.lang.InterruptedException {
+		Scanner in = new Scanner ( System.in );
+		System.out.println("Go back to the main menu? (y/n)");
+		String goback=in.next();
+		while(!goback.equals("y")&&!goback.equals("n")) {
+			System.out.printf("Insert correct answer:");
+			goback=in.next();
+		}
+		in.close();
+		if(goback.equals("y")) {
+			display_menu();
+		}
+		else if(goback.equals("n"))
+			System.exit(0);
 	}
+	
+	//Opção 1
+	
+	public static ArrayList<Game> similar_games(String name) {
+		
+		ArrayList<Game> jogoselect = new ArrayList<Game>();
+		MinHash lol = new MinHash(3, jogos); //5 pq são nomes pequenos
+		int i=1;
+		Map<Game, Double> games = lol.printSimilars_j(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+		if(games.isEmpty()) {
+			System.out.println("Nenhum jogo encontrado!\n");	
+			
+		}else {
+		found_game=true;
+		for(Game g:games.keySet()) {
+			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g.getName(),games.get(g));
+			jogoselect.add(g);
+			i++;
+		}
+		}
+		return jogoselect;
+	}
+	
+public static void showgamestats(Game jogo) throws java.lang.InterruptedException {
+    System.out.println ( "1) Information about game Reviews\n2) Information about game Languages\n3) See all info about the game");
+    System.out.print ( "Selection: " );
+	Scanner in = new Scanner ( System.in );
+
+	switch (in.nextInt()) {
+		case 1:
+			if(reviewsBloom.isEle(jogo.getName())) {
+				System.out.println("O "+jogo.getName()+" tem aproximadamente "+reviewsBloom.numEle(jogo.getName())+" reviews \n");
+				System.out.println ( "1) See spam reviews\n2) See similar reviews without spam\n3) Insert a phrase to see similar reviews\n4) See users with spam reviews in this game");
+				switch (in.nextInt()) {
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+					default:
+						System.err.println ( "Unrecognized option" );
+						goback();
+				}
+				
+				
+			}else {
+				System.out.println("O "+jogo.getName()+" não tem reviews\n");
+			}
+		    
+			in.close();
+			goback();
+			
+			
+			
+			
+			
+
+		case 2:
+			System.out.println("Select Language for Info:");
+			ArrayList<String> languages = language();
+			int i=1;
+			for (String Lang: languages) {
+				System.out.println(i+"."+Lang);
+				i++;
+			}
+			System.out.println("Selection:");
+			int langselect=in.nextInt();
+			String key = languages.get(langselect-1);
+			if(linguagens.get(key).isEle(jogo.getName())) {
+				System.out.printf("O jogo "+jogo.getName()+" tem a linguagem "+key);
+				if(linguagens_text.get(key).isEle(jogo.getName()) && linguagens_audio.get(key).isEle(jogo.getName())) {
+					System.out.printf(", tanto em texto como em audio!\n");
+				}
+				else if(linguagens_text.get(key).isEle(jogo.getName())) {
+					System.out.printf(" apenas em texto!\n");
+				}
+				else if(linguagens_audio.get(key).isEle(jogo.getName())) {
+					System.out.printf(" apenas em audio!\n");
+				}
+			}
+				
+			else
+				System.out.println("O jogo "+jogo.getName()+" não tem a linguagem "+key);
+
+			goback();
+	
+	
+case 3:
+	System.out.println("Info about the game "+jogo.getName()+":");
+	System.out.println("Genres:");
+	for(String genre:jogo.getGenres()) {
+		System.out.println(genre);
+	}
+	System.out.println();
+	System.out.println("Languages:");
+	for(Language lang:jogo.getLanguages()) {
+		System.out.println(lang.getName());
+	}
+	System.out.println();
+	System.out.println("Price: "+jogo.getPrice());
+	System.out.println("Rating: "+jogo.getRating());
+	System.out.println("Publisher: "+jogo.getPublisher());
+	System.out.println("Developer: "+jogo.getDeveloper());
+	System.out.println("Reviews:");
+	if(reviewsBloom.isEle(jogo.getName())) {
+		System.out.println("O jogo tem "+reviewsBloom.numEle(jogo.getName())+" reviews.");
+}	else {
+	System.out.println("O jogo não tem reviews.");
+}
+	goback();
+	}
+		
+	
+	//Criar uma min hash de linguagens e fazer coisa parecida para selecionar linguagens
+
+}
+	
+
+	
 	
 	public static void main(String[] args) throws java.lang.InterruptedException {
 		ReadJson();
 		display_menu();
 		
 	}
+	
+	
 		  
 	
 
  static void display_menu() throws java.lang.InterruptedException {
-	 System.out.print("Welcome to infogames!\n");
+	 System.out.print("Welcome to GOG Database!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Search by game\n2) See the similarities in the reviews of a game\n3) See our program data\n4) Test our program\n5) See Language Info" );
+	    System.out.println ( "1) Search by game\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) See list of spammers\n6) See our program data\n7) Test our program\n"
+	    		+ "" );
 	    System.out.print ( "Selection: " );
 	    
 	    Scanner in = new Scanner ( System.in );
+	    found_game=false;
 	    
 		switch (in.nextInt()) {
 			case 1:
+				ArrayList<Game> jogoselect = null;
 				String name;
-		        System.out.println ( "Insert a game and get info about it" );
-		        Scanner j = new Scanner ( System.in );
-		        name = j.nextLine();
-		        System.out.println(name);
-		        similar_games(name);
+				Scanner j = new Scanner ( System.in );
+				while(found_game!=true) {
+			        System.out.printf( "Insert a game and get info about it: " );
+			       
+			        name = j.nextLine();
+			        System.out.println();
+			        jogoselect = similar_games(name);
+			        }
+		        System.out.printf( "\nSelect the game (by number): ");
+		        int select = j.nextInt();
+		        showgamestats(jogoselect.get(select-1));
 		        
 		        
 		        
@@ -205,16 +345,18 @@ public class Main {
 				System.out.println ( "You picked option 2" );
 				break;
 			case 3:
+				System.out.println ( "You picked option 2" );
+				break;
+			case 4:
 				System.out.println("Our dataset contains "+jogos.size()+" games.");
 				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");		
 				break;
-			case 4:
+			case 5:
 				System.out.println ( "You picked option TESTES" );
 		        teste();
 		        break;
-			case 5:
-				System.out.println ( "You picked option Language Info" );
-		        language();
+			case 6:
+
 		        break;
 			default:
 				System.err.println ( "Unrecognized option" );
@@ -228,9 +370,9 @@ public class Main {
 		json.read();
 		jogos = json.getJogos();
 		
-		CBloom reviewsBloom = new CBloom(jogos.size(), 0.1); // bloom to find out the games with reviews and how many
+		reviewsBloom = new CBloom(jogos.size(), 0.1); // bloom to find out the games with reviews and how many
 		reviewsBloom.initialize();	
-		CBloom noReviewsBloom = new CBloom(jogos.size(), 0.1); // bloom 
+		noReviewsBloom = new CBloom(jogos.size(), 0.1); // bloom 
 		noReviewsBloom.initialize();
 		
 		numNoRev=0;
@@ -252,6 +394,6 @@ public class Main {
 	}
 	
 	public void InterruptedException() {
-		System.err.println("Error doing sleep");
+		System.err.println("Error! Restart the program!");
 	}
 }

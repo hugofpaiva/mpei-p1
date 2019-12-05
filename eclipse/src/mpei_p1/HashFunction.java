@@ -48,6 +48,17 @@ public class HashFunction {
 		return hashes;
 	}
 	
+	
+	public int hashInt(double f, int i) {
+        int hash = 0;
+        hash += (this.randA[0] * f) % this.prime;
+        if (hash<0) {
+        	hash+=prime;
+        }
+        return hash;
+    }
+	
+	
 	public int[] generateSignatures(ArrayList<String> shingles) {
 		int sign[]=new int[100];
 		for (int j=0;j<100;j++) {

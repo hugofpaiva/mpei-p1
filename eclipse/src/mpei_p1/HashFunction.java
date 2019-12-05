@@ -5,20 +5,19 @@ import java.util.Random;
 
 public class HashFunction {
 	private static int max = 1000000;
-	private ArrayList<Integer> seeds = new ArrayList<>();
 	private int[] randA;
 	private int[] randB;
 	private int n;
 	private int k;
 	private int prime;
 	
-	public HashFunction(int k, int n, int maxC) {
+	public HashFunction(int k, int n) {
 		this.k=k;//num hash functions
 		this.n = n;//nº elementos do bloom
-		//Maxc tamanho máximo que as strings têm
-
+		// Maxc tamanho máximo que as strings têm
+		// meter  numero primo
 		Random rand = new Random();
-		while (this.prime<20000 && !isPrime(this.prime)) {
+		while (this.prime<2001 && !isPrime(this.prime)) {
 			this.prime = Math.abs(rand.nextInt(max));
 		}
 		
@@ -26,15 +25,14 @@ public class HashFunction {
 	     this.randB = new int[this.k];
 
 		 for (int i = 0; i < this.k; i++) {
-                this.randA[i] = rand.nextInt(this.prime - 1);
-                this.randB[i] = rand.nextInt(this.prime - 1);
+	                this.randA[i] = rand.nextInt(this.prime - 1);
+	                this.randB[i] = rand.nextInt(this.prime - 1);      
 	     }
 	}
 
 	// Gerar Hash para String
-	public ArrayList<Integer> generateHash_S(String s) {
+	public ArrayList<Integer> generateHash(String s) {
 		ArrayList<Integer> hashes = new ArrayList<>();
-	
 		for (int i=0; i< this.k; i++) {
 			int hash=0;
 			for (int j=0;j<s.length();j++) {
@@ -47,7 +45,16 @@ public class HashFunction {
 		}
 		return hashes;
 	}
-
+	
+	public int hashInt(double f, int i) {
+        int hash = 0;
+        hash += (this.randA[0] * f) % this.prime;
+        if (hash<0) {
+        	hash+=prime;
+        }
+        return hash;
+    }
+	
 	public int[] generateSignatures(ArrayList<String> shingles) {
 		int sign[]=new int[100];
 		for (int j=0;j<100;j++) {
@@ -70,40 +77,6 @@ public class HashFunction {
 		}
 		return sign;
 	}
-	
-	
-	
-	public int[] getRandA() {
-		return randA;
-	}
-
-	public void setRandA(int[] randA) {
-		this.randA = randA;
-	}
-
-	public int[] getRandB() {
-		return randB;
-	}
-
-	public void setRandB(int[] randB) {
-		this.randB = randB;
-	}
-
-	public int getK() {
-		return k;
-	}
-
-	public void setK(int k) {
-		this.k = k;
-	}
-
-	public int getPrime() {
-		return prime;
-	}
-
-	public void setPrime(int prime) {
-		this.prime = prime;
-	}
 
 	public boolean isPrime(int n) {
 		int m = n / 2;
@@ -120,14 +93,6 @@ public class HashFunction {
 
 	}
 
-	public ArrayList<Integer> getSeeds() {
-		return seeds;
-	}
-
-	public void setSeeds(ArrayList<Integer> seeds) {
-		this.seeds = seeds;
-	}
-
 	public int getN() {
 		return n;
 	}
@@ -135,5 +100,31 @@ public class HashFunction {
 	public void setN(int n) {
 		this.n = n;
 	}
+
+	public int[] getRandA() {
+		return randA;
+	}
+
+	public void setRandA(int[] randA) {
+		this.randA = randA;
+	}
+
+	public int[] getRandB() {
+		return randB;
+	}
+
+	public void setRandB(int[] randB) {
+		this.randB = randB;
+	}
+
+	public int getPrime() {
+		return prime;
+	}
+
+	public void setPrime(int prime) {
+		this.prime = prime;
+	}
+	
+	
 
 }

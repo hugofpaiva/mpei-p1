@@ -6,7 +6,7 @@ public class Review {
 	private String user;
 	private String review;
 	private ArrayList<String> shingles = new ArrayList<>();
-	private int[] minhash_shingles=new int[100];
+	private int[] minhash_shingles = new int[100];
 	
 	public Review(String user, String review) {
 		this.user = user;
@@ -40,6 +40,9 @@ public class Review {
 		return shingles;
 	}
 	
+	public void addShingles(String shingle) {
+		this.shingles.add(shingle);
+	}
 
 	public void setShingles(ArrayList<String> shingles) {
 		this.shingles = shingles;
@@ -52,11 +55,11 @@ public class Review {
 	public void setminHash_shingles(int[] hash_shingles) {
 		this.minhash_shingles = hash_shingles;
 	}
-	
+
 	public void addminHash_shingles(int hash_s, int pos) {
 		this.minhash_shingles[pos]=hash_s;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Review [user=" + user + ", review=" + review + "]";

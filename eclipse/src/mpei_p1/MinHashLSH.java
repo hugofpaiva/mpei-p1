@@ -1,6 +1,8 @@
 package mpei_p1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class MinHashLSH extends MinHash{
 	private int rows;
@@ -28,18 +30,13 @@ public class MinHashLSH extends MinHash{
 	
 	
 	 private void createMinHashLSH() {
-        double[] bandRows = new double[rows];
-        for (int nB = 0; nB < this.bands; nB++) {
-        	for (int u = 0; u < this.size; u++) {
-                for (int i = 0; i < this.rows; i++) {
-                    bandRows[i] = this.getSimilar_r()[i + this.rows * nB][u];
-                }
-                this.minHashLSH[nB][u] = 0;
+		for (int col = 0; col < this.size; col++) {
+			for (int band = 0; band < this.bands; band++) {
                 int hashVal=0;
                 for (int i = 0; i < this.rows; i++) {
-                    hashVal += this.getHash_shingle().hashInt(bandRows[i], i);
+                    hashVal += this.getHash_shingle().hashInt(this.getSimilar_r()[i + this.rows * band][col]);
                 }
-                this.minHashLSH[nB][u]=hashVal;
+                this.minHashLSH[band][col]=hashVal;
             }
         }
 	 }
@@ -47,7 +44,7 @@ public class MinHashLSH extends MinHash{
 	 public void printSimilarsLSH(double limiar) {
 		double inters;
 		for (int i=0; i<this.size-1;i++) {
-			for (int j=i+1;j<size;j++) {
+			for (int j=i+1;j<this.size;j++) {
 				if (interLSH(i, j) == 1) {
 					inters =intersect_r(i, j);
 					if (inters >= limiar) {
@@ -59,13 +56,55 @@ public class MinHashLSH extends MinHash{
 		}
 	}
 	 
+		public HashMap<Review, Double> findSimilarsLSH(String rev, double limiar){
+			HashMap<Review,Double> simRevs=new HashMap<>();
+			ArrayList<String> shingles = new ArrayList<>();
+			
+			String string_no_space = rev.replaceAll("\\s+", "");
+			int num_shingles = string_no_space.length() - 3 + 1;
+			
+			for (int j = 0; j < num_shingles; j++) {
+				shingles.add(string_no_space.substring(j, j + 3));
+			}
+			
+			int[] sign=new int[100];
+			sign=this.getHash_shingle().generateSignatures(shingles);
+
+			double[] signLSH = new double[this.bands];
+			for (int band = 0; band < this.bands; band++) {
+				int hashVal=0;
+				for (int i = 0; i < this.rows; i++) {
+                    hashVal += this.getHash_shingle().hashInt(sign[i + this.rows * band]);
+                }
+                signLSH[band]=hashVal;
+            }
+
+			for (int i=0;i<this.size;i++) {
+				double inter=0;
+		        for (int row = 0; row < bands; row++) {
+	                if (minHashLSH[row][i] == signLSH[row]) {
+	                	for (int row2 = 0; row2 < 100; row2++) {
+	    	                if ((int) this.getSimilar_r()[row2][i]==(sign[row2])) {
+	    	                	inter++;
+	    	                }
+	    	            }
+	                	if (inter >= limiar) {
+	    					simRevs.put(this.getReviews().get(i), inter);
+	    				}
+	                	break;
+	                }
+		        }
+			}
+			
+			return simRevs;
+		}	
 	 
 	 public void printSimilarsNoSpamLSH(double limiar, ArrayList<Review> spam) {
 			double inters;
 			boolean found=false;
-			for (int i=0; i<this.getReviews().size()-1;i++) {
-				for (int k=0;k<spam.size();k++) {
-					if (this.getReviews().get(i).getReview().equals(spam.get(k).getReview())) {
+			for (int i=0; i<this.size-1;i++) {
+				for (Review rev: spam) {
+					if (this.getReviews().get(i).getReview().equals(rev.getReview())) {
 						found=true;
 						break;
 					}
@@ -74,10 +113,11 @@ public class MinHashLSH extends MinHash{
 					found=false;
 					continue;
 				}
-				for (int j=i+1;j<this.getReviews().size();j++) {
-					for (int k=0;k<spam.size();k++) {
-						if (this.getReviews().get(j).getReview().equals(spam.get(k).getReview())) {
-							continue;
+				for (int j=i+1;j<this.size;j++) {
+					for (Review rev: spam) {
+						if (this.getReviews().get(j).getReview().equals(rev.getReview())) {
+							found=true;
+							break;
 						}
 					}
 					if (found==true) {
@@ -97,12 +137,12 @@ public class MinHashLSH extends MinHash{
 	 
 	 
 	 
-	 public ArrayList<Review> removeSpamLSH() {
-		 double limiar=95;
+	 public HashSet<Review> removeSpamLSH() {
+		 	double limiar=95;
 			double inters;
 			boolean found=false;
 			
-			ArrayList<Review> spam= new ArrayList<>();
+			HashSet<Review> spam= new HashSet<>();
 			
 			for (int i=0; i<this.size-1;i++) {
 				for (int j=i+1;j<this.size;j++) {
@@ -117,16 +157,16 @@ public class MinHashLSH extends MinHash{
 				if (found==true) {
 					spam.add(this.getReviews().get(i));
 					found=false;
+					i++;
 				}
 			}
-			
 			return spam;
 	 }
 	 
 	 public int interLSH(int i, int j) {
         int inter = 0;
-        for (int row = 0; row < this.rows; row++) {
-            if (minHashLSH[row][i] == minHashLSH[row][j]) {
+        for (int rowB = 0; rowB < this.bands; rowB++) {
+            if (minHashLSH[rowB][i] == minHashLSH[rowB][j]) {
                 inter=1;
                 break;
             }

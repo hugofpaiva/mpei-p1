@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Map;
 
 
 
@@ -38,19 +36,48 @@ public class MinHash {
 			 try {
 				 this.reviews = reviews;
 				 this.hash_shingle = new HashFunction(100, Integer.MAX_VALUE);
+				 Scanner sc2 = null;
+				 Scanner sc3 = null;
+				 Scanner sc4= null;
+				sc2 = new Scanner( new BufferedReader(new FileReader("RandA.txt")));
+				sc3 = new Scanner( new BufferedReader(new FileReader("RandB.txt")));
+				sc4 = new Scanner( new BufferedReader(new FileReader("Prime.txt")));
+				  int prime;
+				  int[] randsA=new int[100];
+				  int[] randsB=new int[100];
+				  
+				  String[] line=sc2.nextLine().trim().split(" ");
+				  for (int j=0; j<line.length; j++) {
+				       randsA[j] = Integer.parseInt((line[j]));
+				  }
+				  
+				  String[] line2=sc3.nextLine().trim().split(" ");
+				  for (int j=0; j<line.length; j++) {
+				       randsB[j] = Integer.parseInt((line2[j]));
+				  }
+				  
+				  String line3=sc4.nextLine().trim();
+				  prime=Integer.parseInt(line3);
+				  this.getHash_shingle().setPrime(prime);
+				this.getHash_shingle().setRandA(randsA);
+				this.getHash_shingle().setRandB(randsB);
 				  Scanner sc = new Scanner( new BufferedReader(new FileReader(fileName)));
+				 
+				  
 			      int rows = 100;
 			      int columns = reviews.size();
 			      this.similar_r = new double[rows][columns];
 			      while(sc.hasNextLine()) {
 			         for (int i=0; i<this.similar_r.length; i++) {
-			            String[] line = sc.nextLine().trim().split(" ");
-			            for (int j=0; j<line.length; j++) {
-			               this.similar_r[i][j] = Double.parseDouble((line[j]));
+			            String[] line1 = sc.nextLine().trim().split(" ");
+			            for (int j=0; j<line1.length; j++) {
+			               this.similar_r[i][j] = Double.parseDouble((line1[j]));
 			            }
 			         }
 			      }
-			 
+			      sc2.close();
+			      sc3.close();
+			      sc4.close();
 			      sc.close();
 			 } catch (IOException e) {}
 		}	
@@ -68,20 +95,38 @@ public class MinHash {
 					for (int j = 0; j < num_shingles; j++) {
 						shingles.add(string_no_space.substring(j, j + s_shingle));
 					}
-					
 					reviews.get(i).setminHash_shingles(this.hash_shingle.generateSignatures(shingles)); // gerar assinaturas de todas as reviews
 				}
 				createMatrix();
 			 try {
 				 
-				File file = new File ("ReviewsSignatures.txt");
+				File file = new File ("RevSignatures.txt");
 				PrintWriter printWriter = new PrintWriter (file);
+				File file2 = new File ("RandA.txt");
+				PrintWriter printWriter2 = new PrintWriter (file2);
+				File file3 = new File ("RandB.txt");
+				PrintWriter printWriter3 = new PrintWriter (file3);
+				File file4 = new File ("Prime.txt");
+				PrintWriter printWriter4 = new PrintWriter (file4);
+				
+				for (int i = 0; i < this.getHash_shingle().getRandA().length; i++) {
+					printWriter2.printf("%d ", this.getHash_shingle().getRandA()[i]);
+				}
+				for (int i = 0; i < this.getHash_shingle().getRandA().length; i++) {
+					printWriter3.printf("%d ", this.getHash_shingle().getRandB()[i]);
+				}
+				printWriter4.printf("%d ", this.getHash_shingle().getPrime());
+				
+				
 			    for (int i = 0; i < similar_r.length; i++) {
 			        for (int j = 0; j < similar_r[i].length; j++) {
 			            printWriter.printf("%.0f ",similar_r[i][j]);
 			        }
 			        printWriter.printf("\n");
 			    }
+			    printWriter2.close();
+			    printWriter4.close();
+			    printWriter3.close();
 			    printWriter.close();
 			 } catch (IOException e) {}
 		}
@@ -134,12 +179,12 @@ public class MinHash {
 		}
 	}
 	
-	public void printSimilarsNoSpam(double limiar, ArrayList<Review> spam) {
+	public void printSimilarsNoSpam(double limiar, HashSet<Review> spam) {
 		double inters;
 		boolean found=false;
 		for (int i=0; i<reviews.size()-1;i++) {
-			for (int k=0;k<spam.size();k++) {
-				if (reviews.get(i).getReview().equals(spam.get(k).getReview())) {
+			for (Review rev: spam) {
+				if (reviews.get(i).getReview().equals(rev.getReview())) {
 					found=true;
 					break;
 				}
@@ -149,9 +194,10 @@ public class MinHash {
 				continue;
 			}
 			for (int j=i+1;j<reviews.size();j++) {
-				for (int k=0;k<spam.size();k++) {
-					if (reviews.get(j).getReview().equals(spam.get(k).getReview())) {
-						continue;
+				for (Review rev: spam) {
+					if (reviews.get(j).getReview().equals(rev.getReview())) {
+						found=true;
+						break;
 					}
 				}
 				if (found==true) {
@@ -167,12 +213,12 @@ public class MinHash {
 		}
 	}
 	
-	public ArrayList<Review> removeSpam() {
+	public HashSet<Review> removeSpam() {
 		double limiar=95;
 		double inters;
 		boolean found=false;
 		
-		ArrayList<Review> spam= new ArrayList<>();
+		HashSet<Review> spam= new HashSet<>();
 		
 		for (int i=0; i<this.reviews.size()-1;i++) {
 			for (int j=i+1;j<this.reviews.size();j++) {
@@ -326,10 +372,4 @@ public class MinHash {
 		this.similar_r = similar_r;
 	}
 	
-	
-
-	
-	
-
-
 }

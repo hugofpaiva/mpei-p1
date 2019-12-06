@@ -2,6 +2,7 @@ package mpei_p1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -120,7 +121,7 @@ public class Main {
 		ArrayList<String> languages = new ArrayList<>();
 		for(Game jogo:jogos) {
 			for(Language lang:jogo.getLanguages()) {
-				if(!languages.contains(lang.getName()) && !lang.getName().isBlank()) {
+				if(!languages.contains(lang.getName()) && !lang.getName().isEmpty()) {
 					languages.add(lang.getName());
 					//Bloom para determinar se um jogo tem uma certa linguagem 
 					CBloom l = new CBloom(jogos.size(), 0.1); // bloom
@@ -135,7 +136,7 @@ public class Main {
 					l_audioBloom.initialize();
 					linguagens_audio.put(lang.getName(), l_audioBloom);
 				}
-				else if(!lang.getName().isBlank()) {
+				else if(!lang.getName().isEmpty()) {
 				CBloom l = linguagens.get(lang.getName());
 				l.insertEle(jogo.getName());
 				if(lang.getText()) {
@@ -174,7 +175,7 @@ public class Main {
 			System.out.printf("Insert correct answer:");
 			goback=in.next();
 		}
-		in.close();
+
 		if(goback.equals("y")) {
 			display_menu();
 		}
@@ -191,8 +192,7 @@ public class Main {
 		int i=1;
 		Map<Game, Double> games = lol.printSimilars_j(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
 		if(games.isEmpty()) {
-			System.out.println("Nenhum jogo encontrado!\n");	
-			
+			System.out.println("Nenhum jogo encontrado!\n");
 		}else {
 		found_game=true;
 		for(Game g:games.keySet()) {
@@ -204,6 +204,52 @@ public class Main {
 		return jogoselect;
 	}
 	
+	public static void showreviewsinfo() throws java.lang.InterruptedException {
+	    System.out.println ( "1) Show full list of Spammers\n2) Search by a phrase all similar reviews of all games\n");
+	    System.out.print ( "Selection: " );
+		Scanner in = new Scanner ( System.in );
+		ArrayList<Review> allRevs = new ArrayList<>();
+		for (Game jogo: jogos) {
+			allRevs.addAll(jogo.getReviews());
+		}
+		MinHashLSH allRevsMin = new MinHashLSH(allRevs, 5, "RevSignatures.txt");
+
+		switch (in.nextInt()) {
+			case 1:
+				HashSet<Review> spamRevs;
+				spamRevs=allRevsMin.removeSpamLSH();
+				System.out.println("Lista de Spammers:");
+				int i=0;
+				for (Review rev : spamRevs) {
+					i++;
+					System.out.printf("%d) %s\n",(i+1), rev.getUser());
+				}
+				System.out.println();
+				goback();
+				break;
+			case 2:
+				System.out.printf("Grau de Similaridade: ");
+				double grau1=in.nextDouble();
+				System.out.printf("Conteúdo da Review a Pesquisar: ");
+				in.nextLine();
+				String revCont=in.nextLine();
+				HashMap<Review,Double> similarRevs= allRevsMin.findSimilarsLSH(revCont, grau1);
+				int index=0;
+				for (Review rev: similarRevs.keySet()) {
+					index++;
+					System.out.printf("%d) Similaridade: %.2f%%\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getReview());
+				}
+				System.out.println();
+				
+				goback();
+				break;
+			default:
+				System.err.println ( "Unrecognized option" );
+				goback();
+			}
+		}	
+	
+	
 public static void showgamestats(Game jogo) throws java.lang.InterruptedException {
     System.out.println ( "1) Information about game Reviews\n2) Information about game Languages\n3) See all info about the game");
     System.out.print ( "Selection: " );
@@ -214,14 +260,55 @@ public static void showgamestats(Game jogo) throws java.lang.InterruptedExceptio
 			if(reviewsBloom.isEle(jogo.getName())) {
 				System.out.println("O "+jogo.getName()+" tem aproximadamente "+reviewsBloom.numEle(jogo.getName())+" reviews \n");
 				System.out.println ( "1) See spam reviews\n2) See similar reviews without spam\n3) Insert a phrase to see similar reviews\n4) See users with spam reviews in this game");
+				MinHash simRevs=new MinHash(jogo.getReviews(), 3);
+				HashSet<Review> spamRevs;
+				spamRevs=simRevs.removeSpam();
 				switch (in.nextInt()) {
 				case 1:
+					System.out.println("Lista de Reviews Spam:");
+					int i=0;
+					for (Review rev:spamRevs) {
+						i++;
+						System.out.printf("%d) %s\n",(i+1), rev.getReview());
+					}
+					System.out.println();
+					goback();
+					break;
 				case 2:
+					System.out.printf("Grau de Similaridade: ");
+					double grau=in.nextDouble();
+					simRevs.printSimilarsNoSpam(grau, spamRevs);
+					System.out.println();
+					goback();
+					break;
 				case 3:
+					System.out.printf("Grau de Similaridade: ");
+					double grau1=in.nextDouble();
+					System.out.printf("Conteúdo da Review a Pesquisar: ");
+					in.nextLine();
+					String revCont=in.nextLine();
+					HashMap<Review, Double> similarRevs= simRevs.findSimilars(revCont, grau1);
+					int index=0;
+					for (Review rev: similarRevs.keySet()) {
+						index++;
+						System.out.printf("%d) Similaridade: %.2f%%\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getReview());
+					}
+					System.out.println();
+					goback();
+					break;
 				case 4:
-					default:
-						System.err.println ( "Unrecognized option" );
-						goback();
+					System.out.println("Lista de Spammers:");
+					int ind=0;
+					for (Review rev:spamRevs) {
+						ind++;
+						System.out.printf("%d) %s\n", (ind+1), rev.getUser());
+					}
+					System.out.println();
+					goback();
+					break;
+				default:
+					System.err.println ( "Unrecognized option" );
+					goback();
 				}
 				
 				
@@ -313,7 +400,7 @@ case 3:
  static void display_menu() throws java.lang.InterruptedException {
 	 System.out.print("Welcome to GOG Database!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Search by game\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) See list of spammers\n6) See our program data\n7) Test our program\n"
+	    System.out.println ( "1) Search by game\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) Reviews Information\n6) See our program data\n7) Test our program\n"
 	    		+ "" );
 	    System.out.print ( "Selection: " );
 	    
@@ -335,11 +422,6 @@ case 3:
 		        System.out.printf( "\nSelect the game (by number): ");
 		        int select = j.nextInt();
 		        showgamestats(jogoselect.get(select-1));
-		        
-		        
-		        
-		        
-		        
 		        break;
 			case 2:
 				System.out.println ( "You picked option 2" );
@@ -352,8 +434,7 @@ case 3:
 				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");		
 				break;
 			case 5:
-				System.out.println ( "You picked option TESTES" );
-		        teste();
+		        showreviewsinfo();
 		        break;
 			case 6:
 

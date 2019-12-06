@@ -140,7 +140,6 @@ public class MinHashLSH extends MinHash{
 	 public HashSet<Review> removeSpamLSH() {
 		 	double limiar=95;
 			double inters;
-			boolean found=false;
 			
 			HashSet<Review> spam= new HashSet<>();
 			
@@ -149,16 +148,11 @@ public class MinHashLSH extends MinHash{
 					if(interLSH(i,j)==1) {
 						inters =intersect_r(i, j);
 						if (inters>= limiar) {
-							found=true;
 							spam.add(this.getReviews().get(j));
+							spam.add(this.getReviews().get(i));
 						}
 					}
 	            }
-				if (found==true) {
-					spam.add(this.getReviews().get(i));
-					found=false;
-					i++;
-				}
 			}
 			return spam;
 	 }

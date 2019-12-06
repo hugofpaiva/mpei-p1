@@ -1,9 +1,12 @@
 package mpei_p1;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -21,83 +24,7 @@ public class Main {
 	
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
-	private static void teste() throws InterruptedException {
-		System.out.println("------------------READING JSON------------------");
-	 	long startTime = System.nanoTime();
-		ReadJSON json = new ReadJSON();
-		json.read();
-		jogos = json.getJogos();
-		
-		long stopTime = System.nanoTime();
-		long elapsedTime = stopTime-startTime;
-		double elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
-		System.out.println("Time elapsed to read json (s): " + elapsedTimeInSecond+" seconds.");
-	    
-	    System.out.println("------------------CREATING BLOOM------------------");
-	    startTime = System.nanoTime();
-
-	    // CriaÁao do bloom e inserir a HashFunction para o bloom usar
-		CBloom reviewsBloom = new CBloom(jogos.size(), 0.1);
-		reviewsBloom.initialize();
-		
-		stopTime = System.nanoTime();
-		elapsedTime = stopTime-startTime;
-		elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
-		System.out.println("Time elapsed to create bloom (s): " + elapsedTimeInSecond+" seconds.");
-		
-		System.out.println("------------------Testes ao BLOOM------------------");
-		TimeUnit.SECONDS.sleep(1);
-		
-		System.out.println("------------------Dados reais------------------");
-		int numIns=0;
-		for (int i=0;i<jogos.size();i++) {
-        	ArrayList<Review> reviews = jogos.get(i).getReviews();
-        	if (jogos.get(i).getName().equals("Might and Magic√Ç¬Æ 6-pack Limited Edition")) {
-            	System.out.println("n de reviews reais de migth: "+reviews.size());
-        	}
-        	if (jogos.get(i).getName().equals("Galactic Civilizations III - Revenge of the Snathi DLC")) {
-    			System.out.println("n de reviews reais de galatic: "+reviews.size());
-    		}
-        	if (jogos.get(i).getName().equals("Enclave")) {
-    			System.out.println("n de reviews reais de enclave: "+reviews.size());
-    		}
-
-        	if (reviews.size() > 0) {
-        		for (int j=0;j<reviews.size();j++) {
-	            	reviewsBloom.insertEle(jogos.get(i).getName());
-        		}
-        		numIns++;
-        	}
-		}
-		TimeUnit.SECONDS.sleep(1);
-		System.out.println("------------------Dados do BLOOM------------------");
-		System.out.println("enclave tem reviews? "+reviewsBloom.isEle("Enclave")); // tem de dar true
-		System.out.println("galatic tem reviews? "+reviewsBloom.isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar false
-		System.out.println("might tem reviews? "+ reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar true
-		
-		
-		TimeUnit.SECONDS.sleep(1);
-		System.out.println("enclave tem quantas reviews? "+reviewsBloom.numEle("Enclave")); // tem de dar 68
-		System.out.println("galatic tem quantas reviews? "+reviewsBloom.numEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar 0
-		System.out.println("migth tem quantas reviews? "+reviewsBloom.numEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar 133
-		
-		//reviewsBloom.deleteEle("Might and Magic√Ç¬Æ 6-pack Limited Edition");
-		//System.out.println(reviewsBloom.isEle("Might and Magic√Ç¬Æ 6-pack Limited Edition")); // tem de dar false
-		
-		double pfp=Math.pow(1-Math.pow(1-1/reviewsBloom.getN(), reviewsBloom.getK()*reviewsBloom.getM()), reviewsBloom.getK());
-		System.out.println("Probabilidade de falso positivo: " + pfp);
-		
-		int pos=0;
-		for (int i=0;i<jogos.size();i++) {
-			if (reviewsBloom.isEle(jogos.get(i).getName())) {
-				pos++;
-			}
-		}
-		
-		System.out.println("Numero de elementos inseridos no bloom: " + numIns);
-		System.out.println("Numero de elementos que estão no bloom: " + pos);
-		System.out.println("Numero de colisoes: "+ (pos-numIns));
-		
+	private static void teste() throws InterruptedException {		
 		
 		System.out.println("------------------Testes à MinHash------------------");
 		//display_menu();
@@ -128,15 +55,12 @@ public class Main {
 					languages.add(lang.getName());
 					//Bloom para determinar se um jogo tem uma certa linguagem 
 					CBloom l = new CBloom(jogos.size(), 0.1); // bloom
-					l.initialize();
 					linguagens.put(lang.getName(), l);
 					//Bloom para determinar se um jogo tem uma certa linguagem e nessa linguagem tem texto
 					CBloom l_textBloom = new CBloom(jogos.size(), 0.1); // bloom 
-					l_textBloom.initialize();
 					linguagens_text.put(lang.getName(), l_textBloom);
 					//Bloom para determinar se um jogo tem uma certa linguagem e nessa linguagem tem audio
 					CBloom l_audioBloom = new CBloom(jogos.size(), 0.1); // bloom 
-					l_audioBloom.initialize();
 					linguagens_audio.put(lang.getName(), l_audioBloom);
 				}
 				else if(!lang.getName().isEmpty()) {
@@ -572,8 +496,10 @@ case 3:
 				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews.");		
 		        break;
 			case 7:
-				System.out.println ( "You picked option TESTES" );
-		        teste();
+				System.out.println ( "You picked option TESTES\n" );
+		        Tests test = new Tests(jogos);
+		        test.bloomTests();
+		        goback();
 				break;
 			default:
 				System.err.println ( "Unrecognized option" );
@@ -587,9 +513,7 @@ case 3:
 		json.read();
 		jogos = json.getJogos();
 		reviewsBloom = new CBloom(jogos.size(), 0.1); // bloom to find out the games with reviews and how many
-		reviewsBloom.initialize();	
 		noReviewsBloom = new CBloom(jogos.size(), 0.1); // bloom 
-		noReviewsBloom.initialize();
 		numNoRev=0;
 		numRev=0;
 		ArrayList<String> publisher = new ArrayList<>();
@@ -616,7 +540,6 @@ case 3:
     			publisher.add(jogos.get(i).getPublisher());
     			//Bloom para determinar se um jogo tem um certo publisher 
     			CBloom p = new CBloom(jogos.size(), 0.1); // bloom
-    			p.initialize();
     			publishers.put(jogos.get(i).getPublisher(), p);
     			
     		}
@@ -629,7 +552,6 @@ case 3:
     			developer.add(jogos.get(i).getDeveloper());
     			//Bloom para determinar se um jogo tem um certo dev 
     			CBloom d = new CBloom(jogos.size(), 0.1); // bloom
-    			d.initialize();
     			developers.put(jogos.get(i).getDeveloper(), d);
     			
     		}

@@ -15,13 +15,12 @@ public class CBloom {
 	     this.n = (int) Math.round(m/fator);
 	     this.k = (int) Math.floor((n*Math.log(2)/m));
 	     this.hashFunction=new HashFunction(k, n);
+	     myBloom = new Integer[this.n];
+		 for (int i = 0; i < this.n; i++) {
+             this.myBloom[i] = 0;
+		 }
 	}
     
-	public void initialize() {
-		myBloom = new Integer[this.n];
-		for (int i = 0; i < this.n; i++)
-            this.myBloom[i] = 0;	
-	}
 	
 	@Override
 	public String toString() {
@@ -29,24 +28,23 @@ public class CBloom {
 	}
 
 	public boolean isEle(String ele) {
+		boolean test=true;
 		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		for (int i=0;i<index.size();i++) {
 			if (myBloom[index.get(i)] == 0) {
-				return false;
+				test=false;
 	        }
 		}
-		return true;
+		return test;
 	}
 	
 	public void deleteEle(String ele) {
 		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		if (isEle(ele)) {
 			int numRem= numEle(ele);
-			for (int j=0;j<numRem;j++) {
-				for (int i=0;i<index.size();i++) {
-					myBloom[index.get(i)]--;
-				}
-			}
+			for (int i=0;i<index.size();i++) {
+				myBloom[index.get(i)]-=numRem;
+			}			
 		}
 	}
 

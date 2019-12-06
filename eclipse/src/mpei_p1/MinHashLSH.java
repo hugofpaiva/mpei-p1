@@ -138,8 +138,10 @@ public class MinHashLSH extends MinHash{
 					if(interLSH(i,j)==1) {
 						inters =intersect_r(i, j);
 						if (inters>= limiar) {
-							spam.add(this.getReviews().get(j));
-							spam.add(this.getReviews().get(i));
+							if (this.getReviews().get(i).getUser().equals(this.getReviews().get(j).getUser())) {
+								spam.add(this.getReviews().get(j));
+								spam.add(this.getReviews().get(i));
+							}
 						}
 					}
 	            }

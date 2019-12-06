@@ -262,9 +262,10 @@ public class MinHash {
 			for (int j=i+1;j<this.reviews.size();j++) {
 				inters =intersect_r(i, j);
 				if (inters>= limiar) {
-					spam.add(reviews.get(j));
-					spam.add(reviews.get(i));
-
+					if (reviews.get(i).getUser().equals(reviews.get(j).getUser())) {
+						spam.add(reviews.get(j));
+						spam.add(reviews.get(i));
+					}
 				}
             }
 		}

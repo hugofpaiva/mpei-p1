@@ -64,7 +64,7 @@ public class Main {
 		Scanner in = new Scanner ( System.in );
 		System.out.println("Voltar para o menu principal? (s/n)");
 		String goback=in.next();
-		while(!goback.equals("y")&&!goback.equals("n")) {
+		while(!goback.equals("s")&&!goback.equals("n")) {
 			System.out.printf("Insira a resposta correta:");
 			goback=in.next();
 		}

@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-	static int numNoRev, numRev;
 	private static CBloom reviewsBloom;
 	private static CBloom noReviewsBloom;
 	private static Boolean found=false;
@@ -418,7 +417,7 @@ case 3:
  static void display_menu() throws java.lang.InterruptedException {
 	 System.out.print("Bem-vindo à base de dados do GOG!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Pesquisa de um jogo para obter informações\n2) Pesquisa de jogos similares\n3) Pesquisa de uma editora para obter informação\n4) Pesquisa de uma desenvolvedora para obter informação\n5) Informações relativas a todas as reviews\n6) Ver informações do dataset\n7) Testes aos módulos\n" );
+	    System.out.println ( "1) Pesquisa de um jogo para obter informações\n2) Pesquisa de jogos similares\n3) Pesquisa de uma editora para obter informação\n4) Pesquisa de uma desenvolvedora para obter informação\n5) Informações relativas a todas as reviews\n6) Testes aos módulos\n" );
 	    
 	    Scanner in = new Scanner ( System.in );
 	    found=false;
@@ -451,11 +450,7 @@ case 3:
 				showreviewsinfo();
 		        break;
 			case 6:
-				System.out.println("O nosso dataset contém "+jogos.size()+" jogos.");
-				System.out.println("Existem "+numRev+" jogos com reviews e "+(jogos.size()-numRev)+" sem reviews.");		
-		        break;
-			case 7:
-		        Tests test = new Tests(jogos);
+				Tests test = new Tests(jogos);
 			    System.out.println ( "1) Testes ao Counting Bloom Filter\n2) Testes ao MinHash e MinHashLSH\n");
 		        Scanner in2 = new Scanner ( System.in );
 		        switch(in2.nextInt()) {
@@ -484,18 +479,14 @@ case 3:
 		jogos = json.getJogos();
 		reviewsBloom = new CBloom(jogos.size(), 0.1); // bloom to find out the games with reviews and how many
 		noReviewsBloom = new CBloom(jogos.size(), 0.1); // bloom 
-		numNoRev=0;
-		numRev=0;
 		ArrayList<String> publisher = new ArrayList<>();
 		ArrayList<String> developer = new ArrayList<>();
 		for (int i=0;i<jogos.size();i++) {
 			
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
         	if (reviews.size() == 0) {
-        		numNoRev++;
             	noReviewsBloom.insertEle(jogos.get(i).getName());
         	} else {
-        		numRev++;
         		for (int j=0;j<reviews.size();j++) {
 	            	reviewsBloom.insertEle(jogos.get(i).getName());
         		}

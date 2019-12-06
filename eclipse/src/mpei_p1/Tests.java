@@ -1,7 +1,6 @@
 package mpei_p1;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -174,7 +173,7 @@ public class Tests {
 		double elapsedTimeInSecond3 = (double) elapsedTime / 1_000_000_000;
 		
 		startTime=System.nanoTime();
-		revMin.printSimilars_r(90);
+		revMinN.printSimilars_r(90);
 		stopTime = System.nanoTime();
 		elapsedTime = stopTime-startTime;
 		double elapsedTimeInSecond4 = (double) elapsedTime / 1_000_000_000;

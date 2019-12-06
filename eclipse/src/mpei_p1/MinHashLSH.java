@@ -99,7 +99,7 @@ public class MinHashLSH extends MinHash{
 			return simRevs;
 		}	
 	 
-	 public void printSimilarsNoSpamLSH(double limiar, ArrayList<Review> spam) {
+	 public void printSimilarsNoSpamLSH(double limiar, HashSet<Review> spam) {
 			double inters;
 			boolean found=false;
 			for (int i=0; i<this.size-1;i++) {
@@ -109,21 +109,11 @@ public class MinHashLSH extends MinHash{
 						break;
 					}
 				}
-				if (found==true) {
+				if (found) {
 					found=false;
 					continue;
 				}
 				for (int j=i+1;j<this.size;j++) {
-					for (Review rev: spam) {
-						if (this.getReviews().get(j).getReview().equals(rev.getReview())) {
-							found=true;
-							break;
-						}
-					}
-					if (found==true) {
-						found=false;
-						continue;
-					}
 					if (interLSH(i,j)==1) {
 						inters =intersect_r(i, j);
 						if (inters>= limiar) {

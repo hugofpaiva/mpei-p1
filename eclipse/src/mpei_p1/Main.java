@@ -24,27 +24,6 @@ public class Main {
 	
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
-	private static void teste() throws InterruptedException {		
-		
-		System.out.println("------------------Testes à MinHash------------------");
-		//display_menu();
-				ArrayList<Review> reviews= new ArrayList<>();
-				int size=0;
-				for (Game jogo : jogos) {
-					for(Review r: jogo.getReviews()) {
-					size++;
-			
-
-						reviews.add(r);
-				
-				}}
-				//System.out.println(reviews);
-
-				MinHash lol = new MinHash(reviews, 10); //10 pq são frases grandes
-				
-				lol.printSimilars_r(90); // Similariedade, quanto maior mais similares são. Entre 0 e 1
-	}
-	
 	public static ArrayList<String> language() {	    
 		//Bloom para determinar se um jogo tem uma certa linguagem 
 			   
@@ -83,13 +62,13 @@ public class Main {
 	
 	public static void goback() throws java.lang.InterruptedException {
 		Scanner in = new Scanner ( System.in );
-		System.out.println("Go back to the main menu? (y/n)");
+		System.out.println("Voltar para o menu principal? (s/n)");
 		String goback=in.next();
 		while(!goback.equals("y")&&!goback.equals("n")) {
-			System.out.printf("Insert correct answer:");
+			System.out.printf("Insira a resposta correta:");
 			goback=in.next();
 		}
-		if(goback.equals("y")) {
+		if(goback.equals("s")) {
 			display_menu();
 		}
 		else if(goback.equals("n"))
@@ -108,7 +87,7 @@ public class Main {
 		}else {
 		found=true;
 		for(Game j:games.keySet()) {
-			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,j.getName(),games.get(j));
+			System.out.printf("%d. %s - Similaridade: %.2f%%\n",i,j.getName(),games.get(j));
 			jogoselect.add(j);
 			i++;
 		}
@@ -128,7 +107,7 @@ public class Main {
 		}else {
 		found=true;
 		for(Game g:games.keySet()) {
-			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g.getName(),games.get(g));
+			System.out.printf("%d. %s - Similaridade: %.2f%%\n",i,g.getName(),games.get(g));
 			jogoselect.add(g);
 			i++;
 		}
@@ -142,12 +121,12 @@ public class Main {
 		int i=1;
 		Map<String, Double> games = lol.printSimilars_string(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
 		if(games.isEmpty()) {
-			System.out.println("Nenhum publisher encontrado!\n");	
+			System.out.println("Nenhuma editora encontrada!\n");	
 			
 		}else {
 		found=true;
 		for(String g: games.keySet()) {
-			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g,games.get(g));
+			System.out.printf("%d. %s - Similaridade: %.2f%%\n",i,g,games.get(g));
 			publisherselect.add(g);
 			i++;
 		}
@@ -166,7 +145,7 @@ public class Main {
 		}else {
 		found=true;
 		for(String g: games.keySet()) {
-			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g,games.get(g));
+			System.out.printf("%d. %s - Similaridade: %.2f%%\n",i,g,games.get(g));
 			developerselect.add(g);
 			i++;
 		}
@@ -175,7 +154,7 @@ public class Main {
 	}
 	
 	public static void showgamestats(Game jogo) throws java.lang.InterruptedException {
-    System.out.println ( "1) Information about game Reviews\n2) Information about game Languages\n3) See all info about the game");
+    System.out.println ( "1) Informação sobre as Reviews \n2) Informação sobre as Linguagens\n3) Ver todas as informações");
     System.out.print ( "Selection: " );
 	Scanner in = new Scanner ( System.in );
 
@@ -231,7 +210,7 @@ public class Main {
 					goback();
 					break;
 				default:
-					System.err.println ( "Unrecognized option" );
+					System.err.println ( "Opção não reconhecida." );
 					goback();
 				}
 				
@@ -249,7 +228,7 @@ public class Main {
 			
 
 		case 2:
-			System.out.println("Select Language for Info:");
+			System.out.println("Selecione a Linguagem para obter informação:");
 			TimeUnit.SECONDS.sleep(1);
 			ArrayList<String> languages = language();
 			int i=1;
@@ -257,7 +236,7 @@ public class Main {
 				System.out.println(i+"."+Lang);
 				i++;
 			}
-			System.out.println("Selection:");
+			System.out.println("Selecione (pelo número): ");
 			int langselect=in.nextInt();
 			String key = languages.get(langselect-1);
 			if(linguagens.get(key).isEle(jogo.getName())) {
@@ -280,21 +259,21 @@ public class Main {
 	
 	
 case 3:
-	System.out.println("Info about the game "+jogo.getName()+":");
-	System.out.println("Genres:");
+	System.out.println("Informação do jogo "+jogo.getName()+":\n");
+	System.out.println("Géneros:");
 	for(String genre:jogo.getGenres()) {
 		System.out.println(genre);
 	}
 	System.out.println();
-	System.out.println("Languages:");
+	System.out.println("Linguagens:");
 	for(Language lang:jogo.getLanguages()) {
 		System.out.println(lang.getName());
 	}
 	System.out.println();
-	System.out.println("Price: "+jogo.getPrice());
-	System.out.println("Rating: "+jogo.getRating());
-	System.out.println("Publisher: "+jogo.getPublisher());
-	System.out.println("Developer: "+jogo.getDeveloper());
+	System.out.println("Preço: "+jogo.getPrice());
+	System.out.println("Classificação: "+jogo.getRating());
+	System.out.println("Editora: "+jogo.getPublisher());
+	System.out.println("Publicadora: "+jogo.getDeveloper());
 	System.out.println("Reviews:");
 	if(reviewsBloom.isEle(jogo.getName())) {
 		System.out.println("O jogo tem "+reviewsBloom.numEle(jogo.getName())+" reviews.");
@@ -306,8 +285,8 @@ case 3:
 }
 	
 	public static void showreviewsinfo() throws java.lang.InterruptedException {
-	    System.out.println ( "1) Show full list of Spammers\n2) Search by a phrase all similar reviews of all games\n");
-	    System.out.print ( "Selection: " );
+	    System.out.println ( "1) Mostrar a lista total de Spammers\n2) Procurar por frase todas as reviews parecidas de todos os jogos\n");
+	    System.out.print ( "Selecione: " );
 		Scanner in = new Scanner ( System.in );
 		ArrayList<Review> allRevs = new ArrayList<>();
 		for (Game jogo: jogos) {
@@ -345,7 +324,7 @@ case 3:
 				goback();
 				break;
 			default:
-				System.err.println ( "Unrecognized option" );
+				System.err.println ( "Opção não reconhecida." );
 				goback();
 			}
 		}	
@@ -362,14 +341,14 @@ case 3:
 		String name;
 		Scanner j = new Scanner ( System.in );
 		while(found!=true) {
-	        System.out.printf( "Insert a game: " );
+	        System.out.printf( "Insira um jogo: " );
 	       
 	        name = j.nextLine();
 	        System.out.println();
 	        jogoselect = similar_games_name(name);
 	        }
 		found=false;
-        System.out.printf( "\nSelect the game (by number): ");
+        System.out.printf( "\nSelecione o jogo (pelo número): ");
         int select = j.nextInt();
         return jogoselect.get(select-1);
 	}
@@ -380,7 +359,7 @@ case 3:
 		String publisher;
 		Scanner j = new Scanner ( System.in );
 		while(found!=true) {
-	        System.out.printf( "Insert a publisher: " );
+	        System.out.printf( "Insira uma editora: " );
 	       
 	        publisher = j.nextLine();
 	        System.out.println();
@@ -388,7 +367,7 @@ case 3:
 	        publisherselect = similar_publisher(publisher,publishers);
 	        }
 		found=false;
-        System.out.printf( "\nSelect the publisher (by number): ");
+        System.out.printf( "\nSelecione uma editora (pelo número): ");
         int select = j.nextInt();
         return publisherselect.get(select-1);
 		}
@@ -399,7 +378,7 @@ case 3:
 		String developer;
 		Scanner j = new Scanner ( System.in );
 		while(found!=true) {
-	        System.out.printf( "Insert a developer: " );
+	        System.out.printf( "Insira uma desenvolvedora: " );
 	       
 	        developer = j.nextLine();
 	        System.out.println();
@@ -407,7 +386,7 @@ case 3:
 	        developerselect = similar_developer(developer,developers);
 	        }
 		found=false;
-        System.out.printf( "\nSelect the developer (by number): ");
+        System.out.printf( "\nSelecione uma desenvolvedora (pelo número): ");
         int select = j.nextInt();
         return developerselect.get(select-1);
 		}
@@ -415,51 +394,31 @@ case 3:
 	
 	
 	public static void showpublishertats(String select) throws java.lang.InterruptedException {
-	    System.out.println ( "1) Check if a game is owned by the publisher \n");
-	    System.out.print ( "Selection: " );
-		Scanner in = new Scanner ( System.in );
-		switch (in.nextInt()) {
-			case 1:
-				Game selection=selectjogo();
-				if(publishers.get(select).isEle(selection.getName())) 
-					System.out.println(select+" possui o jogo "+selection.getName());
-				else
-					System.out.println(select+" não possui o jogo "+selection.getName());
-				goback();
-				break;
-			default:
-				System.err.println ( "Unrecognized option" );
-				break;
-		  
-					}
+		System.out.println("Verifique se a editora é dona de um jogo");
+		Game selection=selectjogo();
+		if(publishers.get(select).isEle(selection.getName())) 
+			System.out.println(select+" possui o jogo "+selection.getName());
+		else
+			System.out.println(select+" não possui o jogo "+selection.getName());
+		goback();
+				
 	}
 	
 	public static void showdeveloperstats(String select) throws java.lang.InterruptedException {
-	    System.out.println ( "1) Check if a game is made by the developer \n");
-	    System.out.print ( "Selection: " );
-		Scanner in = new Scanner ( System.in );
-		switch (in.nextInt()) {
-			case 1:
-				Game selection=selectjogo();
-				if(developers.get(select).isEle(selection.getName())) 
-					System.out.println(select+" fez o jogo "+selection.getName());
-				else
-					System.out.println(select+" não fez o jogo "+selection.getName());
-				goback();				
-				break;
-			default:
-				System.err.println ( "Unrecognized option" );
-				break;
-		  
-					}
+	    System.out.println( "Verifique se desenvolvedora fez um jogo " );
+
+		Game selection=selectjogo();
+		if(developers.get(select).isEle(selection.getName())) 
+			System.out.println(select+" fez o jogo "+selection.getName());
+		else
+			System.out.println(select+" não fez o jogo "+selection.getName());
+		goback();
 	}
 
  static void display_menu() throws java.lang.InterruptedException {
-	 System.out.print("Welcome to GOG Database!\n");
+	 System.out.print("Bem-vindo à base de dados do GOG!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Search by game and get info\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) Reviews Information\n6) See our program data\n7) Test our program\n"
-	    		+ "" );
-	    System.out.print ( "Selection: " );
+	    System.out.println ( "1) Pesquisa de um jogo para obter informações\n2) Pesquisa de jogos similares\n3) Pesquisa de uma editora para obter informação\n4) Pesquisa de uma desenvolvedora para obter informação\n5) Informações relativas a todas as reviews\n6) Ver informações do dataset\n7) Testes aos módulos\n" );
 	    
 	    Scanner in = new Scanner ( System.in );
 	    found=false;
@@ -492,17 +451,28 @@ case 3:
 				showreviewsinfo();
 		        break;
 			case 6:
-				System.out.println("Our dataset contains "+jogos.size()+" games.");
-				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews.");		
+				System.out.println("O nosso dataset contém "+jogos.size()+" jogos.");
+				System.out.println("Existem "+numRev+" jogos com reviews e "+(jogos.size()-numRev)+" sem reviews.");		
 		        break;
 			case 7:
-				System.out.println ( "You picked option TESTES\n" );
 		        Tests test = new Tests(jogos);
-		        test.bloomTests();
+			    System.out.println ( "1) Testes ao Counting Bloom Filter\n2) Testes ao MinHash e MinHashLSH\n");
+		        Scanner in2 = new Scanner ( System.in );
+		        switch(in2.nextInt()) {
+		        case 1:
+		        	test.bloomTests();
+		        	break;
+		        case 2:
+		        	test.minTests();
+		        	break;
+		        default:
+					System.err.println ( "Opção não reconhecida." );
+					break;
+		        }
 		        goback();
 				break;
 			default:
-				System.err.println ( "Unrecognized option" );
+				System.err.println ( "Opção não reconhecida." );
 				break;
 	    }
 		in.close();
@@ -565,6 +535,6 @@ case 3:
 	}
 	
 	public void InterruptedException() {
-		System.err.println("Error! Restart the program!");
+		System.err.println("Erro! Recomece o programa!");
 	}
 }

@@ -1,6 +1,7 @@
 package mpei_p1;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +56,21 @@ public class Tests {
 	            }
 	        }        
 			System.out.println("\tDados Obtidos do Bloom:");
+			double inds=0;
+			int times=0;
+			Integer[] bloom=testeBloom.getMyBloom();
+			for (int i=0;i<testeBloom.getN();i++) {
+				if (bloom[i]!=0) {
+					times++;
+					inds+=i;
+				}
+			}
+			double media=((inds/times)/testeBloom.getN())*100;
+			if (media>40 && media<60)
+				System.out.printf("Distribuição dos elementos: Uniforme\n");
+			else {
+				System.out.println("Distribuição dos elementos: Não Uniforme\n");
+			}
 		    double pTeor=Math.pow(1-Math.pow(1-(double)1/testeBloom.getN(), testeBloom.getK()*testeBloom.getM()), testeBloom.getK());
 		    System.out.printf("Número de falsos positivos: %.0f\n", falsePos);
 			System.out.println("Probabilidade de falsos positivos: " + (falsePos)/(maxEle));
@@ -127,4 +143,54 @@ public class Tests {
 			System.out.println("Probabilidade de falsos positivos: " + (pos-numIns-1)/(numIns-1));
 			System.out.println("Probabilidade teórica de falsos positivos: " + pfp);
 	}
+	
+	
+	public void minTests() throws InterruptedException {
+		System.out.println("------------------Testes à MinHash------------------");
+		
+		ArrayList<Review> allRevs= new ArrayList<>();
+		
+		for (int i=0;i<80;i++) {
+			if (jogos.get(i).getReviews().size()>0)
+				allRevs.addAll(jogos.get(i).getReviews());
+		}
+		
+		
+	    long startTime = System.nanoTime();
+		MinHashLSH revMin = new MinHashLSH(allRevs, 5, 5);
+		long stopTime = System.nanoTime();
+		long elapsedTime = stopTime-startTime;
+		double elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
+		startTime = System.nanoTime();
+		MinHash revMinN = new MinHash(allRevs, 5);
+		stopTime = System.nanoTime();
+		elapsedTime = stopTime-startTime;
+		double elapsedTimeInSecond2 = (double) elapsedTime / 1_000_000_000;
+
+		startTime=System.nanoTime();
+		revMin.printSimilarsLSH(90); 
+		stopTime = System.nanoTime();
+		elapsedTime = stopTime-startTime;
+		double elapsedTimeInSecond3 = (double) elapsedTime / 1_000_000_000;
+		
+		startTime=System.nanoTime();
+		revMin.printSimilars_r(90);
+		stopTime = System.nanoTime();
+		elapsedTime = stopTime-startTime;
+		double elapsedTimeInSecond4 = (double) elapsedTime / 1_000_000_000;
+		
+		System.out.println();
+		System.out.println("\nPrint de reviews de todos os jogos com similariedade superior a 90% com MinHash e com MinHashLSH.\n");
+		System.out.println("Tempo de demora de criação de MinHash: "+ elapsedTimeInSecond2 + " segundos.");
+		System.out.println("Tempo de demora de criação de MinHashLSH: "+ elapsedTimeInSecond+ " segundos.");
+		System.out.println("Tempo de procura de similares com MinHash: " + elapsedTimeInSecond4+ " segundos.");
+		System.out.println("Tempo de procura de similares com MinHashLSH: " + elapsedTimeInSecond3+ " segundos.");
+		
+	}
+	
+	public void InterruptedException() {
+		System.err.println("Error! Restart the program!");
+	}
+	
+	
 }

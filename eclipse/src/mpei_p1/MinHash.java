@@ -238,21 +238,11 @@ public class MinHash {
 					break;
 				}
 			}
-			if (found==true) {
+			if (found) {
 				found=false;
 				continue;
 			}
 			for (int j=i+1;j<reviews.size();j++) {
-				for (Review rev: spam) {
-					if (reviews.get(j).getReview().equals(rev.getReview())) {
-						found=true;
-						break;
-					}
-				}
-				if (found==true) {
-					found=false;
-					continue;
-				}
 				inters =intersect_r(i, j);
 				if (inters>= limiar) {
 					System.out.printf("\nReviews com Grau Similariedade de %.2f%%.\n",inters);
@@ -265,7 +255,6 @@ public class MinHash {
 	public HashSet<Review> removeSpam() {
 		double limiar=95;
 		double inters;
-		boolean found=false;
 		
 		HashSet<Review> spam= new HashSet<>();
 		
@@ -273,14 +262,11 @@ public class MinHash {
 			for (int j=i+1;j<this.reviews.size();j++) {
 				inters =intersect_r(i, j);
 				if (inters>= limiar) {
-					found=true;
 					spam.add(reviews.get(j));
+					spam.add(reviews.get(i));
+
 				}
             }
-			if (found==true) {
-				spam.add(reviews.get(i));
-				found=false;
-			}
 		}
 		
 		return spam;

@@ -28,14 +28,13 @@ public class CBloom {
 	}
 
 	public boolean isEle(String ele) {
-		boolean test=true;
 		ArrayList<Integer> index= hashFunction.generateHash(ele);
 		for (int i=0;i<index.size();i++) {
 			if (myBloom[index.get(i)] == 0) {
-				test=false;
+				return false;
 	        }
 		}
-		return test;
+		return true;
 	}
 	
 	public void deleteEle(String ele) {
@@ -77,6 +76,16 @@ public class CBloom {
 	public int getM() {
 		return this.m;
 	}
+	
+	public Integer[] getMyBloom() {
+		return myBloom;
+	}
+
+	public void setMyBloom(Integer[] myBloom) {
+		this.myBloom = myBloom;
+	}
+
+
 	
 	
 }

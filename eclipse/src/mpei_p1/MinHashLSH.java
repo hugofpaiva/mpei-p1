@@ -34,7 +34,7 @@ public class MinHashLSH extends MinHash{
 			for (int band = 0; band < this.bands; band++) {
                 int hashVal=0;
                 for (int i = 0; i < this.rows; i++) {
-                    hashVal += this.getHash_shingle().hashInt(this.getSimilar_r()[i + this.rows * band][col]);
+                    hashVal += this.getHash_shingle().hashInt(this.getSimilar()[i + this.rows * band][col]);
                 }
                 this.minHashLSH[band][col]=hashVal;
             }
@@ -84,7 +84,7 @@ public class MinHashLSH extends MinHash{
 		        for (int row = 0; row < bands; row++) {
 	                if (minHashLSH[row][i] == signLSH[row]) {
 	                	for (int row2 = 0; row2 < 100; row2++) {
-	    	                if ((int) this.getSimilar_r()[row2][i]==(sign[row2])) {
+	    	                if ((int) this.getSimilar()[row2][i]==(sign[row2])) {
 	    	                	inter++;
 	    	                }
 	    	            }

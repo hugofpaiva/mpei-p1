@@ -11,10 +11,13 @@ public class Main {
 	static int numNoRev, numRev;
 	private static CBloom reviewsBloom;
 	private static CBloom noReviewsBloom;
-	private static Boolean found_game=false;
-	private static HashMap<String, CBloom> linguagens = new HashMap<>(); 
+	private static Boolean found=false;
+	private static HashMap<String, CBloom> linguagens = new HashMap<>();
+	private static HashMap<String, CBloom> publishers = new HashMap<>(); 
+	private static HashMap<String, CBloom> developers = new HashMap<>(); 
 	private static HashMap<String, CBloom> linguagens_text = new HashMap<>(); 
 	private static HashMap<String, CBloom> linguagens_audio = new HashMap<>(); 
+	private static ReadJSON json;
 	
 	private static ArrayList<Game> jogos = new ArrayList<>();
 	
@@ -152,19 +155,6 @@ public class Main {
 		}	
 		return languages;
 		
-		/*
-		System.out.println("------------------Dados do BLOOM------------------");
-		System.out.println("enclave tem Português do Brasil? "+linguagens.get("Português do Brasil").isEle("Enclave")); // tem de dar false
-		System.out.println("enclave tem český? "+linguagens.get("český").isEle("Enclave")); // tem de dar false
-		System.out.println("enclave tem nederlands? "+linguagens.get("nederlands").isEle("Enclave")); // tem de dar false
-		System.out.println("galatic tem русский? "+linguagens.get("русский").isEle("Galactic Civilizations III - Revenge of the Snathi DLC")); // tem de dar true
-		System.out.println("might tem norsk? "+ linguagens.get("norsk").isEle("Might and Magic® 6-pack Limited Edition")); // tem de dar false
-		System.out.println("Teenagent tem polski e texto dela? "+ linguagens.get("polski").isEle("Teenagent") + linguagens_text.get("polski").isEle("Teenagent") ); // tem de dar false
-
-*/
-			
-		
-		
 	}
 	
 	public static void goback() throws java.lang.InterruptedException {
@@ -175,7 +165,6 @@ public class Main {
 			System.out.printf("Insert correct answer:");
 			goback=in.next();
 		}
-
 		if(goback.equals("y")) {
 			display_menu();
 		}
@@ -184,17 +173,36 @@ public class Main {
 	}
 	
 	//Opção 1
-	
-	public static ArrayList<Game> similar_games(String name) {
+	public static ArrayList<Game> similar_games_all(Game g) {
+		ArrayList<Game> jogoselect = new ArrayList<Game>();
+		MinHash lol = new MinHash(jogos); //min hash para comparar jogos 
+		int i=1;
+		Map<Game, Double> games = lol.printSimilars_j_all(50, g); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+		if(games.isEmpty()) {
+			System.out.println("Nenhum jogo encontrado!\n");	
+			
+		}else {
+		found=true;
+		for(Game j:games.keySet()) {
+			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,j.getName(),games.get(j));
+			jogoselect.add(j);
+			i++;
+		}
+		}
+		return jogoselect;
+	}
+
+	public static ArrayList<Game> similar_games_name(String name) {
 		
 		ArrayList<Game> jogoselect = new ArrayList<Game>();
-		MinHash lol = new MinHash(3, jogos); //5 pq são nomes pequenos
+		MinHash lol = new MinHash(2, jogos);
 		int i=1;
 		Map<Game, Double> games = lol.printSimilars_j(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
 		if(games.isEmpty()) {
-			System.out.println("Nenhum jogo encontrado!\n");
+			System.out.println("Nenhum jogo encontrado!\n");	
+			
 		}else {
-		found_game=true;
+		found=true;
 		for(Game g:games.keySet()) {
 			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g.getName(),games.get(g));
 			jogoselect.add(g);
@@ -204,53 +212,45 @@ public class Main {
 		return jogoselect;
 	}
 	
-	public static void showreviewsinfo() throws java.lang.InterruptedException {
-	    System.out.println ( "1) Show full list of Spammers\n2) Search by a phrase all similar reviews of all games\n");
-	    System.out.print ( "Selection: " );
-		Scanner in = new Scanner ( System.in );
-		ArrayList<Review> allRevs = new ArrayList<>();
-		for (Game jogo: jogos) {
-			allRevs.addAll(jogo.getReviews());
+	public static ArrayList<String> similar_publisher(String name, ArrayList<String> publishers) {
+		ArrayList<String> publisherselect = new ArrayList<String>();
+		MinHash lol = new MinHash(2, false, publishers);
+		int i=1;
+		Map<String, Double> games = lol.printSimilars_string(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+		if(games.isEmpty()) {
+			System.out.println("Nenhum publisher encontrado!\n");	
+			
+		}else {
+		found=true;
+		for(String g: games.keySet()) {
+			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g,games.get(g));
+			publisherselect.add(g);
+			i++;
 		}
-		MinHashLSH allRevsMin = new MinHashLSH(allRevs, 5, "RevSignatures.txt");
-
-		switch (in.nextInt()) {
-			case 1:
-				HashSet<Review> spamRevs;
-				spamRevs=allRevsMin.removeSpamLSH();
-				System.out.println("Lista de Spammers:");
-				int i=0;
-				for (Review rev : spamRevs) {
-					i++;
-					System.out.printf("%d) %s\n",(i+1), rev.getUser());
-				}
-				System.out.println();
-				goback();
-				break;
-			case 2:
-				System.out.printf("Grau de Similaridade: ");
-				double grau1=in.nextDouble();
-				System.out.printf("Conteúdo da Review a Pesquisar: ");
-				in.nextLine();
-				String revCont=in.nextLine();
-				HashMap<Review,Double> similarRevs= allRevsMin.findSimilarsLSH(revCont, grau1);
-				int index=0;
-				for (Review rev: similarRevs.keySet()) {
-					index++;
-					System.out.printf("%d) Similaridade: %.2f%%\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getReview());
-				}
-				System.out.println();
-				
-				goback();
-				break;
-			default:
-				System.err.println ( "Unrecognized option" );
-				goback();
-			}
-		}	
+		}
+		return publisherselect;
+	}
 	
+	public static ArrayList<String> similar_developer(String name, ArrayList<String> developers) {
+		ArrayList<String> developerselect = new ArrayList<String>();
+		MinHash lol = new MinHash(2, false, developers);
+		int i=1;
+		Map<String, Double> games = lol.printSimilars_string(30, name); // Similariedade, quanto maior mais similares são. Entre 0 e 1
+		if(games.isEmpty()) {
+			System.out.println("Nenhum developer encontrado!\n");	
+			
+		}else {
+		found=true;
+		for(String g: games.keySet()) {
+			System.out.printf("%d. %s - Similarity: %.2f%%\n",i,g,games.get(g));
+			developerselect.add(g);
+			i++;
+		}
+		}
+		return developerselect;
+	}
 	
-public static void showgamestats(Game jogo) throws java.lang.InterruptedException {
+	public static void showgamestats(Game jogo) throws java.lang.InterruptedException {
     System.out.println ( "1) Information about game Reviews\n2) Information about game Languages\n3) See all info about the game");
     System.out.print ( "Selection: " );
 	Scanner in = new Scanner ( System.in );
@@ -326,6 +326,7 @@ public static void showgamestats(Game jogo) throws java.lang.InterruptedExceptio
 
 		case 2:
 			System.out.println("Select Language for Info:");
+			TimeUnit.SECONDS.sleep(1);
 			ArrayList<String> languages = language();
 			int i=1;
 			for (String Lang: languages) {
@@ -377,15 +378,54 @@ case 3:
 	System.out.println("O jogo não tem reviews.");
 }
 	goback();
-	}
-		
-	
-	//Criar uma min hash de linguagens e fazer coisa parecida para selecionar linguagens
-
+	}	
 }
 	
+	public static void showreviewsinfo() throws java.lang.InterruptedException {
+	    System.out.println ( "1) Show full list of Spammers\n2) Search by a phrase all similar reviews of all games\n");
+	    System.out.print ( "Selection: " );
+		Scanner in = new Scanner ( System.in );
+		ArrayList<Review> allRevs = new ArrayList<>();
+		for (Game jogo: jogos) {
+			allRevs.addAll(jogo.getReviews());
+		}
+		MinHashLSH allRevsMin = new MinHashLSH(allRevs, 5, "RevSignatures.txt");
 
-	
+		switch (in.nextInt()) {
+			case 1:
+				HashSet<Review> spamRevs;
+				spamRevs=allRevsMin.removeSpamLSH();
+				System.out.println("Lista de Spammers:");
+				int i=0;
+				for (Review rev : spamRevs) {
+					i++;
+					System.out.printf("%d) %s\n",(i+1), rev.getUser());
+				}
+				System.out.println();
+				goback();
+				break;
+			case 2:
+				System.out.printf("Grau de Similaridade: ");
+				double grau1=in.nextDouble();
+				System.out.printf("Conteúdo da Review a Pesquisar: ");
+				in.nextLine();
+				String revCont=in.nextLine();
+				HashMap<Review,Double> similarRevs= allRevsMin.findSimilarsLSH(revCont, grau1);
+				int index=0;
+				for (Review rev: similarRevs.keySet()) {
+					index++;
+					System.out.printf("%d) Similaridade: %.2f%%\nUtilizador: %s\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getUser(),similarRevs.get(rev),rev.getReview());
+				}
+				System.out.println();
+				
+				goback();
+				break;
+			default:
+				System.err.println ( "Unrecognized option" );
+				goback();
+			}
+		}	
+		
 	
 	public static void main(String[] args) throws java.lang.InterruptedException {
 		ReadJson();
@@ -393,52 +433,148 @@ case 3:
 		
 	}
 	
+	public static Game selectjogo() {
+		ArrayList<Game> jogoselect = null;
+		String name;
+		Scanner j = new Scanner ( System.in );
+		while(found!=true) {
+	        System.out.printf( "Insert a game: " );
+	       
+	        name = j.nextLine();
+	        System.out.println();
+	        jogoselect = similar_games_name(name);
+	        }
+		found=false;
+        System.out.printf( "\nSelect the game (by number): ");
+        int select = j.nextInt();
+        return jogoselect.get(select-1);
+	}
 	
+	public static String selectpublisher() {
+		ArrayList<String> publisherselect = new ArrayList<>();
+		ArrayList<String> publishers;
+		String publisher;
+		Scanner j = new Scanner ( System.in );
+		while(found!=true) {
+	        System.out.printf( "Insert a publisher: " );
+	       
+	        publisher = j.nextLine();
+	        System.out.println();
+	        publishers=ReadJSON.getPublishers();
+	        publisherselect = similar_publisher(publisher,publishers);
+	        }
+		found=false;
+        System.out.printf( "\nSelect the publisher (by number): ");
+        int select = j.nextInt();
+        return publisherselect.get(select-1);
+		}
+	
+	public static String selectdeveloper() {
+		ArrayList<String> developerselect = new ArrayList<>();
+		ArrayList<String> developers;
+		String developer;
+		Scanner j = new Scanner ( System.in );
+		while(found!=true) {
+	        System.out.printf( "Insert a developer: " );
+	       
+	        developer = j.nextLine();
+	        System.out.println();
+	        developers=ReadJSON.getDevelopers();
+	        developerselect = similar_developer(developer,developers);
+	        }
+		found=false;
+        System.out.printf( "\nSelect the developer (by number): ");
+        int select = j.nextInt();
+        return developerselect.get(select-1);
+		}
+	
+	
+	
+	public static void showpublishertats(String select) throws java.lang.InterruptedException {
+	    System.out.println ( "1) Check if a game is owned by the publisher \n");
+	    System.out.print ( "Selection: " );
+		Scanner in = new Scanner ( System.in );
+		switch (in.nextInt()) {
+			case 1:
+				Game selection=selectjogo();
+				if(publishers.get(select).isEle(selection.getName())) 
+					System.out.println(select+" possui o jogo "+selection.getName());
+				else
+					System.out.println(select+" não possui o jogo "+selection.getName());
+				goback();
+				break;
+			default:
+				System.err.println ( "Unrecognized option" );
+				break;
 		  
+					}
+	}
 	
+	public static void showdeveloperstats(String select) throws java.lang.InterruptedException {
+	    System.out.println ( "1) Check if a game is made by the developer \n");
+	    System.out.print ( "Selection: " );
+		Scanner in = new Scanner ( System.in );
+		switch (in.nextInt()) {
+			case 1:
+				Game selection=selectjogo();
+				if(developers.get(select).isEle(selection.getName())) 
+					System.out.println(select+" fez o jogo "+selection.getName());
+				else
+					System.out.println(select+" não fez o jogo "+selection.getName());
+				goback();				
+				break;
+			default:
+				System.err.println ( "Unrecognized option" );
+				break;
+		  
+					}
+	}
 
  static void display_menu() throws java.lang.InterruptedException {
 	 System.out.print("Welcome to GOG Database!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Search by game\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) Reviews Information\n6) See our program data\n7) Test our program\n"
+	    System.out.println ( "1) Search by game and get info\n2) Search Similar games\n3) Publisher Database\n4) Developer Database\n5) Reviews Information\n6) See our program data\n7) Test our program\n"
 	    		+ "" );
 	    System.out.print ( "Selection: " );
 	    
 	    Scanner in = new Scanner ( System.in );
-	    found_game=false;
+	    found=false;
+	    
+	    Game selection;
+	    String select;
 	    
 		switch (in.nextInt()) {
 			case 1:
-				ArrayList<Game> jogoselect = null;
-				String name;
-				Scanner j = new Scanner ( System.in );
-				while(found_game!=true) {
-			        System.out.printf( "Insert a game and get info about it: " );
-			       
-			        name = j.nextLine();
-			        System.out.println();
-			        jogoselect = similar_games(name);
-			        }
-		        System.out.printf( "\nSelect the game (by number): ");
-		        int select = j.nextInt();
-		        showgamestats(jogoselect.get(select-1));
+				selection=selectjogo();
+		        showgamestats(selection);
+		        
+		        
 		        break;
 			case 2:
-				System.out.println ( "You picked option 2" );
+				selection=selectjogo();
+				similar_games_all(selection);
 				break;
 			case 3:
-				System.out.println ( "You picked option 2" );
+				select=selectpublisher();
+				showpublishertats(select);
+	
 				break;
 			case 4:
-				System.out.println("Our dataset contains "+jogos.size()+" games.");
-				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews in out dataset.");		
+				select=selectdeveloper();
+				showdeveloperstats(select);
+				
 				break;
 			case 5:
-		        showreviewsinfo();
+				showreviewsinfo();
 		        break;
 			case 6:
-
+				System.out.println("Our dataset contains "+jogos.size()+" games.");
+				System.out.println("There are "+numRev+" games with reviews and "+(jogos.size()-numRev)+" without reviews.");		
 		        break;
+			case 7:
+				System.out.println ( "You picked option TESTES" );
+		        teste();
+				break;
 			default:
 				System.err.println ( "Unrecognized option" );
 				break;
@@ -447,18 +583,19 @@ case 3:
 	 }
 
 	private static void ReadJson() {
-		ReadJSON json = new ReadJSON();
+		json = new ReadJSON();
 		json.read();
 		jogos = json.getJogos();
-		
 		reviewsBloom = new CBloom(jogos.size(), 0.1); // bloom to find out the games with reviews and how many
 		reviewsBloom.initialize();	
 		noReviewsBloom = new CBloom(jogos.size(), 0.1); // bloom 
 		noReviewsBloom.initialize();
-		
 		numNoRev=0;
 		numRev=0;
+		ArrayList<String> publisher = new ArrayList<>();
+		ArrayList<String> developer = new ArrayList<>();
 		for (int i=0;i<jogos.size();i++) {
+			
         	ArrayList<Review> reviews = jogos.get(i).getReviews();
         	if (reviews.size() == 0) {
         		numNoRev++;
@@ -469,9 +606,40 @@ case 3:
 	            	reviewsBloom.insertEle(jogos.get(i).getName());
         		}
         	}
+        	
+        	
+        	
+        	//Developer and publisher bloom
+    		
+    		
+    		if(!publisher.contains(jogos.get(i).getPublisher()) && !jogos.get(i).getPublisher().isEmpty()) {
+    			publisher.add(jogos.get(i).getPublisher());
+    			//Bloom para determinar se um jogo tem um certo publisher 
+    			CBloom p = new CBloom(jogos.size(), 0.1); // bloom
+    			p.initialize();
+    			publishers.put(jogos.get(i).getPublisher(), p);
+    			
+    		}
+    		else if(!jogos.get(i).getPublisher().isEmpty()) {
+    		CBloom p = publishers.get(jogos.get(i).getPublisher());
+    		p.insertEle(jogos.get(i).getName());
+    		}	
+    		
+    		if(!developer.contains(jogos.get(i).getDeveloper()) && !jogos.get(i).getDeveloper().isEmpty()) {
+    			developer.add(jogos.get(i).getDeveloper());
+    			//Bloom para determinar se um jogo tem um certo dev 
+    			CBloom d = new CBloom(jogos.size(), 0.1); // bloom
+    			d.initialize();
+    			developers.put(jogos.get(i).getDeveloper(), d);
+    			
+    		}
+    		else if(!jogos.get(i).getDeveloper().isEmpty()) {
+    		CBloom d = developers.get(jogos.get(i).getDeveloper());
+    		d.insertEle(jogos.get(i).getName());
+    		}	
+
 		}
-		
-		
+	
 	}
 	
 	public void InterruptedException() {

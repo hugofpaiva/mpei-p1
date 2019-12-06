@@ -10,6 +10,8 @@ import org.json.simple.parser.ParseException;
 
 public class ReadJSON {
 	private ArrayList<Game> jogos = new ArrayList<>();
+	public static ArrayList<String> Publishers = new ArrayList<>();
+	public static ArrayList<String> Developers = new ArrayList<>();
 
 		public void read() {
 			try {
@@ -19,6 +21,15 @@ public class ReadJSON {
 				ArrayList<JSONObject> obj = (ArrayList<JSONObject>) new JSONParser().parse(new FileReader("./dataset/games.json")); 		       
 		        
 		        for (JSONObject jogo : obj) {
+		        	
+		        	// adição dos publishers
+		        	if(!Publishers.contains(jogo.get("publisher")))
+		        		Publishers.add((String) jogo.get("publisher"));
+		        	
+		        	// adição dos developers
+		        	if(!Developers.contains(jogo.get("developer")))
+		        		Developers.add((String) jogo.get("developer"));
+		        	
 		        	// criação do nome do jogo
 		        	String nome = (String) jogo.get("name");
 		        	
@@ -97,6 +108,26 @@ public class ReadJSON {
 
 		public void setJogos(ArrayList<Game> jogos) {
 			this.jogos = jogos;
+		}
+
+
+		public static ArrayList<String> getPublishers() {
+			return Publishers;
+		}
+
+
+		public static void setPublishers(ArrayList<String> publishers) {
+			Publishers = publishers;
+		}
+
+
+		public static ArrayList<String> getDevelopers() {
+			return Developers;
+		}
+
+
+		public static void setDevelopers(ArrayList<String> developers) {
+			Developers = developers;
 		}
 
 		

@@ -50,7 +50,7 @@ public class HashFunction {
 	
 	
 	public int hashInt(double f) {
-        int hash = 0;
+		int hash = 0;
         hash += (this.randA[0] * f) % this.prime;
         if (hash<0) {
         	hash+=prime;

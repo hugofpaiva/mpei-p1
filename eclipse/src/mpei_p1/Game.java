@@ -12,7 +12,9 @@ public class Game {
 	private String publisher;
 	private String developer;
 	private ArrayList<String> shingles_name = new ArrayList<>();
+	private ArrayList<String> attributes = new ArrayList<>();
 	private int[] minhash_shingles_name = new int[100];
+	private int[] minhash_att = new int[100];
 	
 	
 	public Game(String nome, ArrayList<Review> reviews, ArrayList<String> genres, ArrayList<Language> languages, double price, String publisher, String developer, double rating) {
@@ -35,6 +37,32 @@ public class Game {
 		for (int i = 0; i < num_shingles; i++) {
 			this.shingles_name.add(string_no_space.substring(i, i + s_shingle));
 		}
+    }
+	
+	public void createShingles_all() {
+		int num_shingles;
+		for(String genre:this.genres)
+			this.attributes.add(genre);
+		//shingles de publisher
+		num_shingles = this.publisher.length() - 3 + 1;
+		
+		for (int i = 0; i < num_shingles; i++) {
+			this.attributes.add(this.publisher.substring(i, i + 3));
+		}
+		
+		//shingles de developer
+		num_shingles = this.developer.length() - 3 + 1;
+		
+		for (int i = 0; i < num_shingles; i++) {
+			this.attributes.add(this.developer.substring(i, i + 3));
+		}
+
+		this.attributes.add(Double.toString(this.price));
+		this.attributes.add(Double.toString(this.rating));
+		for(Language lang:this.languages) {
+			attributes.add(lang.getName());
+		}
+		
     }
 	
 	public String getName() {
@@ -119,6 +147,25 @@ public class Game {
 	public void addminHash_shingles_name(int hash_s, int pos) {
 		this.minhash_shingles_name[pos]=hash_s;
 	}
+
+	public ArrayList<String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(ArrayList<String> attributes) {
+		this.attributes = attributes;
+	}
+
+
+	public int[] getMinhash_att() {
+		return minhash_att;
+	}
+
+	public void setMinhash_att(int[] minhash_att) {
+		this.minhash_att = minhash_att;
+	}
+	
+	
 
 	@Override
 	public String toString() {

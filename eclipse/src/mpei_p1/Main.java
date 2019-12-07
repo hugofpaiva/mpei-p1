@@ -161,7 +161,7 @@ public class Main {
 		case 1:
 			if(reviewsBloom.isEle(jogo.getName())) {
 				System.out.println("O "+jogo.getName()+" tem aproximadamente "+reviewsBloom.numEle(jogo.getName())+" reviews \n");
-				System.out.println ( "1) See spam reviews\n2) See similar reviews without spam\n3) Insert a phrase to see similar reviews\n4) See users with spam reviews in this game");
+				System.out.println ( "1) Ver reviews consideradas como spam\n2) Ver reviews similares sem spam\n3) Inserir uma frase para ver reviews similares\n4) Ver utilizadores com reviews consideradas como spam");
 				MinHash simRevs=new MinHash(jogo.getReviews(), 3);
 				HashSet<Review> spamRevs;
 				spamRevs=simRevs.removeSpam();
@@ -316,7 +316,7 @@ case 3:
 				int index=0;
 				for (Review rev: similarRevs.keySet()) {
 					index++;
-					System.out.printf("%d) Similaridade: %.2f%%\nUtilizador: %s\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getUser(),similarRevs.get(rev),rev.getReview());
+					System.out.printf("%d) Similaridade: %.2f%%\nUtilizador: %s\nReview: %s\n",(index+1),similarRevs.get(rev),rev.getUser(),rev.getReview());
 				}
 				System.out.println();
 				
@@ -417,8 +417,8 @@ case 3:
  static void display_menu() throws java.lang.InterruptedException {
 	 System.out.print("Bem-vindo à base de dados do GOG!\n");
 	 TimeUnit.SECONDS.sleep(1);
-	    System.out.println ( "1) Pesquisa de um jogo para obter informações\n2) Pesquisa de jogos similares\n3) Pesquisa de uma editora para obter informação\n4) Pesquisa de uma desenvolvedora para obter informação\n5) Informações relativas a todas as reviews\n6) Testes aos módulos\n" );
-	    
+	    System.out.println ( "1) Pesquisa de um jogo para obter informações\n2) Pesquisa de jogos similares\n3) Pesquisa de uma editora para obter informação\n4) Pesquisa de uma desenvolvedora para obter informação\n5) Informações relativas a todas as reviews\n6) Testes aos módulos" );
+	    System.out.printf( "Opção:" );
 	    Scanner in = new Scanner ( System.in );
 	    found=false;
 	    
@@ -435,6 +435,7 @@ case 3:
 			case 2:
 				selection=selectjogo();
 				similar_games_all(selection);
+				goback();
 				break;
 			case 3:
 				select=selectpublisher();
@@ -526,6 +527,6 @@ case 3:
 	}
 	
 	public void InterruptedException() {
-		System.err.println("Erro! Recomece o programa!");
+		System.err.println("Erro! Reinicie o programa!");
 	}
 }

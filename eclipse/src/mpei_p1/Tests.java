@@ -179,7 +179,7 @@ public class Tests {
 		double elapsedTimeInSecond4 = (double) elapsedTime / 1_000_000_000;
 		
 		System.out.println();
-		System.out.println("\nPrint de reviews de todos os jogos com similariedade superior a 90% com MinHash e com MinHashLSH.\n");
+		System.out.println("\nPrint de reviews para os primeiros 80 jogos com similariedade superior a 90% com MinHash e com MinHashLSH.\n");
 		System.out.println("Tempo de demora de criação de MinHash: "+ elapsedTimeInSecond2 + " segundos.");
 		System.out.println("Tempo de demora de criação de MinHashLSH: "+ elapsedTimeInSecond+ " segundos.");
 		System.out.println("Tempo de procura de similares com MinHash: " + elapsedTimeInSecond4+ " segundos.");
@@ -188,7 +188,7 @@ public class Tests {
 	}
 	
 	public void InterruptedException() {
-		System.err.println("Error! Restart the program!");
+		System.err.println("Erro! Reinicie o programa!");
 	}
 	
 	

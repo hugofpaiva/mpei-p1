@@ -23,6 +23,14 @@ O comando seguinte  **compila o programa** (*main.java*), em alternativa ao IDE
 
 ```
 
+## Trabalho Futuro
+
+Devido à escassez de tempo perante a data limite de entrega, alguns aspetos não-chave do trabalho acabaram por não ser trabalhados:
+
+- Otmimização 
+- Organização e Estruturação mais clara
+
+
 ## Autores
 
  - **[Hugo Paiva de Almeida](https://github.com/hugofpaiva) - 93195**
@@ -30,6 +38,7 @@ O comando seguinte  **compila o programa** (*main.java*), em alternativa ao IDE
  
  ## Nota
 Classificação obtida de **18** valores em 20.
+
 
 
 

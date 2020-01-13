@@ -23,6 +23,14 @@ O comando seguinte  **compila o programa** (*main.java*), em alternativa ao IDE
 
 ```
 
+## Autores
+
+ - **[Hugo Paiva de Almeida](https://github.com/hugofpaiva) - 93195**
+ - **Mário Silva - 93430**
+ 
+ ## Nota
+Classificação obtida de **18** valores em 20.
+
 
 
 

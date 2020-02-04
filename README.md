@@ -12,6 +12,11 @@ Para compilar o programa é recomendada a utilização de um IDE como, por exemp
 ### Executar
 Para executar o programa é necessária a compilação e execução do ficheiro *Main.java*.
 
+## Detalhes
+
+É possível encontrar todos os detalhes no [Relatório do Trabalho](relatorio.pdf).
+
+
 ## Trabalho Futuro
 
 Devido à escassez de tempo perante a data limite de entrega, alguns aspetos não-chave do trabalho acabaram por não ser trabalhados:

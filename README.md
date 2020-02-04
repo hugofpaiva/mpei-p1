@@ -7,21 +7,10 @@ Este trabalho prático teve como objetivos o desenvolvimento de dois módulos, u
 Estas instruções vão ajudar a executar os programas desenvolvidos.
 
 ### Requisitos
-Para compilar os programas, é necessário ter um IDE instalado. Em alternativa, é possível usar um compilador de Java, como por exemplo Javac. 
+Para compilar o programa é recomendada a utilização de um IDE como, por exemplo, o *Eclipse*. É também necessária a utilização do *Java toolkit* *JSON.simple*, que se encontra no repositório, de maneira a facilitar a descodificação do ficheiro *JSON*. 
 
-### Compilar
-O comando seguinte  **compila o programa** (*main.java*), em alternativa ao IDE 
-
-```
-```
-
-## Executar
-
-**Opções:**
-```
-
-
-```
+### Executar
+Para executar o programa é necessária a compilação e execução do ficheiro *Main.java*.
 
 ## Trabalho Futuro
 

@@ -28,7 +28,7 @@ Devido à escassez de tempo perante a data limite de entrega, alguns aspetos nã
 ## Autores
 
  - **[Hugo Paiva de Almeida](https://github.com/hugofpaiva) - 93195**
- - **Mário Silva - 93430**
+ - **[Mário Silva](https://github.com/MarioCSilva) - 93430**
  
  ## Nota
 Classificação obtida de **18** valores em 20.
